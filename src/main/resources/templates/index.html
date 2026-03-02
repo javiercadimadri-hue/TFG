@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Tendrás que tener la carpeta de Font Awesome en el mismo directorio donde está este archivo HTML. -->
+    <link rel="stylesheet" th:href="@{/fontawesome-free-7.1.0-web/css/all.css}" type="text/css">
+    <title>IronFit - Página Principal</title>
+    <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
+</head>
+<body>
+    <!-- HEADER SIN SESIÓN -->
+    <header class="header" id="header-login">
+        <div class="logo">
+            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
+        </div>
+        <h1 class="title">IronFit</h1>
+    <nav class="nav-links">
+        <a th:href="@{/gimnasio}">Gimnasio</a>
+        <a th:href="@{/tienda}">Tienda</a>
+        <a th:href="@{/profesionales}">Profesionales</a>
+    </nav>
+        <div class="account-links">
+            <a th:href="@{/login}">Iniciar Sesión</a>
+            <a th:href="@{/registro}">Inscribirse</a>
+        </div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+    </header>
+
+    <!-- HEADER CON SESIÓN -->
+    <header class="header" id="header-cuenta" style="display: none;">
+        <div class="logo">
+            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
+        </div>
+        <h1 class="title">
+            <a th:href="@{/}" class="title-link" style="color: inherit; text-decoration: none;">IronFit</a>
+        </h1>
+        <nav class="nav-links">
+            <a th:href="@{/gimnasio}">Gimnasio</a>
+            <a th:href="@{/tienda}">Tienda</a>
+            <a th:href="@{/profesionales}">Profesionales</a>
+        </nav>
+        <div class="account-links">
+            <a th:href="@{/admin}" class="admin-link">
+                <i class="fas fa-user-shield"></i>
+                <span>Admin</span>
+            </a>
+            <a th:href="@{/carrito}" class="cart-icon-link">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            <a th:href="@{/cuenta}" class="account-profile-link">
+                <span class="user-name">MI CUENTA</span>
+            </a>
+        </div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+    </header>
+
+    <section class="slider-container">
+        <div class="slider" id="slider">
+            <div class="slide"><img th:src="@{/img/fondo1.png}" alt="Gym 1"></div>
+            <div class="slide"><img th:src="@{/img/fondo2.png}" alt="Gym 2"></div>
+            <div class="slide"><img th:src="@{/img/fondo3.png}" alt="Gym 3"></div>
+        </div>
+
+        <button class="btn-prev" onclick="prevSlide()">&#10094;</button>
+        <button class="btn-next" onclick="nextSlide()">&#10095;</button>
+    </section>
+
+    <section class="brands-section">
+    <h2 class="brands-title">Marcas Colaborativas</h2>
+    <div class="brands-container">
+        <div class="brand-item"><img th:src="@{/img/marca1.webp}" alt="Marca 1"></div>
+        <div class="brand-item"><img th:src="@{/img/marca2.png}" alt="Marca 2"></div>
+        <div class="brand-item"><img th:src="@{/img/marca3.png}" alt="Marca 3"></div>
+        <div class="brand-item"><img th:src="@{/img/marca4.png}" alt="Marca 4"></div>
+        <div class="brand-item"><img th:src="@{/img/marca5.png}" alt="Marca 5"></div>
+    </div>
+</section>
+
+<section class="objetivos-section">
+    <h2 class="objetivos-title">Entrena y Compra según tus Objetivos</h2>
+
+    <div class="objetivos-grid">
+        <div class="objetivo-item item-left">
+            <img th:src="@{/img/ganarMusculo.jpg}" alt="Objetivo Fuerza">
+            <div class="overlay">Ganar Músculo</div>
+        </div>
+        
+        <div class="objetivo-center-column">
+            <div class="objetivo-item item-center-top">
+                <img th:src="@{/img/perderPeso.jpg}" alt="Objetivo Cardio">
+                <div class="overlay">Perder Peso</div>
+            </div>
+            <div class="objetivo-item item-center-bottom">
+                <img th:src="@{/img/recuperación.webp}" alt="Objetivo Flexibilidad">
+                <div class="overlay">Recuperación</div>
+            </div>
+        </div>
+
+        <div class="objetivo-item item-right">
+            <img th:src="@{/img/salud.webp}" alt="Objetivo Nutrición">
+            <div class="overlay">Salud</div>
+        </div>
+    </div>
+</section>
+
+<section class="newsletter-section">
+    <div class="newsletter-container">
+        <div class="newsletter-text">
+            <h2>Inscríbete para recibir nuestras últimas noticias y promociones</h2>
+        </div>
+
+        <div class="newsletter-form">
+            <input type="email" placeholder="Introduce tu email..." class="newsletter-input">
+            <button class="newsletter-btn">Inscríbete</button>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>Únete a nosotros</h3>
+            <ul>
+                <li><a href="#">Trabaja con nosotros</a></li>
+                <li><a href="#">Embajadores</a></li>
+                <li><a href="#">Corporativo</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-column">
+            <h3>Ayuda e Información</h3>
+            <ul>
+                <li><a href="#">Soporte</a></li>
+                <li><a href="#">Preguntas frecuentes</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Donde encontrarnos</h3>
+            <ul>
+                <li><a href="#">Nuestros centros</a></li>
+                <li><a href="#">Mapa del sitio</a></li>
+                <li><a href="#">Horarios</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Condiciones</h3>
+            <ul>
+                <li><a href="#">Política de privacidad</a></li>
+                <li><a href="#">Aviso legal</a></li>
+                <li><a href="#">Cookies</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<!-- <section class="full-width-section">
+    <div class="full-images-container">
+        <div class="full-image-item">
+            <img src="img/general1.jpg" alt="Entrenamiento 1">
+        </div>
+        <div class="full-image-item">
+            <img src="img/general3.png" alt="Entrenamiento 2">
+        </div>
+        <div class="full-image-item">
+            <img src="img/general2.png" alt="Entrenamiento 3">
+        </div>
+    </div>
+</section> -->
+
+        <script>
+        const slider = document.getElementById("slider");
+        const slides = document.querySelectorAll(".slide");
+        let index = 0;
+
+        function showSlide(n) {
+            index = n;
+            if (index >= slides.length) index = 0;
+            if (index < 0) index = slides.length - 1;
+            
+            // Desplazamiento horizontal
+            slider.style.transform = `translateX(${-index * 100 / slides.length}%)`;
+        }
+
+        function nextSlide() {
+            showSlide(index + 1);
+        }
+
+        function prevSlide() {
+            showSlide(index - 1);
+        }
+
+        // Cambio automático cada 5 segundos
+        let autoSlide = setInterval(nextSlide, 5000);
+
+        // Detener el auto-cambio si el usuario hace clic manualmente
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                clearInterval(autoSlide);
+                autoSlide = setInterval(nextSlide, 5000);
+            });
+        });
+    </script>
+
+    <!-- Script para cambiar header según sesión -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            const headerLogin = document.getElementById('header-login');
+            const headerCuenta = document.getElementById('header-cuenta');
+            
+            if (token) {
+                // Usuario tiene sesión iniciada
+                headerLogin.style.display = 'none';
+                headerCuenta.style.display = 'flex';
+                
+                // Actualizar foto y nombre del usuario
+                const usuarioJSON = localStorage.getItem('usuario');
+                if (usuarioJSON) {
+                    const usuario = JSON.parse(usuarioJSON);
+                    const avatarImg = headerCuenta.querySelector('.user-avatar');
+                    const userNameSpan = headerCuenta.querySelector('.user-name');
+                    
+                    if (usuario.foto && usuario.foto !== 'null') {
+                        avatarImg.src = '/img/' + usuario.foto;
+                    }
+                    if (usuario.nombre) {
+                        userNameSpan.textContent = usuario.nombre;
+                    }
+                }
+            } else {
+                // No hay sesión
+                headerLogin.style.display = 'flex';
+                headerCuenta.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>

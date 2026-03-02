@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/cuenta.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/fontawesome-free-7.1.0-web/css/all.css}" type="text/css">
+    <title>IronFit - Mi Cuenta</title>
+    <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+<main class="account-container">
+    <aside class="profile-sidebar">
+        <div class="sidebar-card profile-glow-effect"> 
+            <div class="profile-pic-container">
+                <img src="img/default-profile.jpg" alt="Foto de perfil" class="sidebar-avatar">
+                <button class="btn-upload-photo" id="btn-upload-photo" title="Cambiar foto de perfil">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+            <input type="file" id="foto-input" accept="image/*" style="display: none;">
+            <div class="personal-data">
+                <div class="data-group">
+                    <label>Nombre</label>
+                    <p id="user-nombre">Cargando...</p>
+                </div>
+                <div class="data-group">
+                    <label>Email</label>
+                    <p id="user-email">Cargando...</p>
+                </div>
+                <div class="data-group">
+                    <label>Teléfono</label>
+                    <p id="user-telefono">No registrado</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <section class="account-content">
+    <div class="content-header">
+        <h1 class="profile-main-title">Cargando...</h1>
+        <div class="plan-info-box">
+            <div class="plan-text">
+                <span class="plan-tag">Plan actual:</span>
+                <span class="plan-highlight">Premium Vip</span>
+            </div>
+            <a th:href="@{/gimnasio}" class="btn-swap">Cambiar plan</a>
+        </div>
+    </div>
+
+    <div class="orders-history" id="historial-pedidos">
+        <p style="text-align: center; color: #999;">Cargando historial de pedidos...</p>
+        <h2 class="section-title">Historial de pedidos</h2>
+
+        <div class="order-box">
+            <div class="order-top">
+                <div class="order-meta">
+                    <p><strong>Nº Orden:</strong> #IF-98421</p>
+                    <p><strong>Fecha:</strong> 14/02/2026</p>
+                </div>
+                <div class="order-total-price">77.99€</div>
+            </div>
+            <p class="products-label">Productos</p>
+            <div class="product-row">
+                <img src="img/proteinaChoco.png" alt="Producto">
+                <span class="p-name">Proteína Whey 2kg</span>
+                <div class="p-values-right">
+                    <span class="p-qty">x1</span>
+                    <span class="p-price">59.99€</span>
+                </div>
+            </div>
+            <div class="product-row">
+                <img src="img/barritaEner.png" alt="Producto">
+                <span class="p-name">Barrita Energética Brownie</span>
+                <div class="p-values-right">
+                    <span class="p-qty">x1</span>
+                    <span class="p-price">18.00€</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-box">
+            <div class="order-top">
+                <div class="order-meta">
+                    <p><strong>Nº Orden:</strong> #IF-97500</p>
+                    <p><strong>Fecha:</strong> 28/01/2026</p>
+                </div>
+                <div class="order-total-price">45.50€</div>
+            </div>
+            <p class="products-label">Productos</p>
+            <div class="product-row">
+                <img src="img/creatina.png" alt="Producto">
+                <span class="p-name">Creatina Monohidratada 500g</span>
+                <div class="p-values-right">
+                    <span class="p-qty">x1</span>
+                    <span class="p-price">45.50€</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-box">
+            <div class="order-top">
+                <div class="order-meta">
+                    <p><strong>Nº Orden:</strong> #IF-96210</p>
+                    <p><strong>Fecha:</strong> 10/01/2026</p>
+                </div>
+                <div class="order-total-price">32.90€</div>
+            </div>
+            <p class="products-label">Productos</p>
+            <div class="product-row">
+                <img src="img/shaker.png" alt="Producto">
+                <span class="p-name">Shaker IronFit Pro - Edición Acero</span>
+                <div class="p-values-right">
+                    <span class="p-qty">x1</span>
+                    <span class="p-price">12.95€</span>
+                </div>
+            </div>
+            <div class="product-row">
+                <img src="img/magnesio.png" alt="Producto">
+                <span class="p-name">Magnesio Líquido 250ml</span>
+                <div class="p-values-right">
+                    <span class="p-qty">x1</span>
+                    <span class="p-price">19.95€</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Únete a nosotros</h3>
+                <ul>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                    <li><a href="#">Embajadores</a></li>
+                    <li><a href="#">Corporativo</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Ayuda e Información</h3>
+                <ul>
+                    <li><a href="#">Soporte</a></li>
+                    <li><a href="#">Preguntas frecuentes</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Donde encontrarnos</h3>
+                <ul>
+                    <li><a href="#">Nuestros centros</a></li>
+                    <li><a href="#">Mapa del sitio</a></li>
+                    <li><a href="#">Horarios</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Condiciones</h3>
+                <ul>
+                    <li><a href="#">Política de privacidad</a></li>
+                    <li><a href="#">Aviso legal</a></li>
+                    <li><a href="#">Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+<script th:src="@{/auth.js}"></script>
+<script th:src="@{/user-info.js}"></script>
+
+<script>
+// Script para cambiar foto de perfil
+document.addEventListener('DOMContentLoaded', function() {
+    const btnUploadPhoto = document.getElementById('btn-upload-photo');
+    const fotoInput = document.getElementById('foto-input');
+
+    if (btnUploadPhoto && fotoInput) {
+        btnUploadPhoto.addEventListener('click', function() {
+            fotoInput.click();
+        });
+
+        fotoInput.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validar que sea una imagen
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor selecciona una imagen válida');
+                return;
+            }
+
+            // Validar tamaño (máximo 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('La imagen es demasiado grande (máximo 5MB)');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const usuarioJSON = localStorage.getItem('usuario');
+                
+                if (!token || !usuarioJSON) {
+                    alert('No hay sesión iniciada');
+                    return;
+                }
+
+                const usuario = JSON.parse(usuarioJSON);
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Mostrar indicador de carga
+                btnUploadPhoto.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btnUploadPhoto.disabled = true;
+
+                const response = await fetch(`/api/usuarios/${usuario.id_usuario}/foto`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // La foto se guarda en uploads/, accedemos vía GET endpoint
+                    const fotoUrl = `/api/usuarios/${usuario.id_usuario}/foto?t=` + new Date().getTime();
+                    
+                    // Actualizar localStorage con la nueva info de foto
+                    usuario.foto = usuario.id_usuario + '/foto'; // Guardar referencia al endpoint
+                    localStorage.setItem('usuario', JSON.stringify(usuario));
+
+                    // Actualizar imagen en la página
+                    const avatarImages = document.querySelectorAll('.user-avatar, .sidebar-avatar');
+                    avatarImages.forEach(img => {
+                        img.src = fotoUrl;
+                    });
+
+                    alert('Foto actualizada correctamente');
+                    
+                    // Limpiar input
+                    fotoInput.value = '';
+                } else {
+                    const error = await response.text();
+                    alert('Error al subir la foto: ' + error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al subir la foto: ' + error.message);
+            } finally {
+                // Restaurar botón
+                btnUploadPhoto.innerHTML = '<i class="fas fa-camera"></i>';
+                btnUploadPhoto.disabled = false;
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>

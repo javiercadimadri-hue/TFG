@@ -1,0 +1,234 @@
+
+/* --- FUENTES --- */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* --- VARIABLES --- */
+:root {
+    --azul: #043EBD;
+    --azulC: #3A6FF2;
+    --negro: #000000;
+    --grisC: #858585;
+    --grisO: #1C1B1B;
+    --blanco: #FFFFFF;
+}
+
+/* --- ESTILOS GENERALES --- */
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--negro);
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    color: var(--blanco);
+    overflow-x: hidden;
+}
+
+/* --- HEADER --- */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px 40px;
+    background-color: var(--negro);
+    border-bottom: 1px solid var(--grisO);
+}
+
+.logo img { height: 70px; width: auto; }
+
+.title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 35px;
+    color: var(--blanco);
+    text-transform: uppercase;
+    margin-left: 15px;
+    line-height: 1;
+}
+
+.title-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+
+.title-link:visited {
+    color: inherit;
+}
+
+.nav-links { display: flex; gap: 45px; margin-left: 120px; }
+.nav-links a {
+    text-decoration: none;
+    color: var(--blanco);
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.3s, transform 0.3s;
+}
+.nav-links a:hover { color: var(--azulC); transform: scale(1.1); }
+
+/* --- SECCIÓN ACCOUNT LINKS (ADMIN, CARRITO, PERFIL) --- */
+.account-links { 
+    display: flex; 
+    gap: 45px; /* Mayor separación entre elementos como pediste */
+    margin-left: auto; 
+    align-items: center; 
+}
+
+/* Enlace Panel Admin */
+.admin-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--grisC);
+    font-size: 10px; /* Tamaño reducido para jerarquía */
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+.admin-link i { font-size: 18px; margin-bottom: 4px; }
+.admin-link:hover { color: var(--azulC); transform: translateY(-2px); }
+
+/* Icono Carrito */
+.cart-icon-link {
+    color: var(--blanco);
+    font-size: 24px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.cart-icon-link:hover { color: var(--azulC); transform: scale(1.1); }
+
+/* Enlace Perfil Personalizado (Sin fondo ni bordes) */
+.account-profile-link {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espacio entre imagen y nombre */
+    text-decoration: none;
+    color: var(--blanco);
+    transition: 0.3s;
+}
+
+.user-avatar {
+    width: 48px; /* Imagen más grande */
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid transparent; /* Evita saltos en el hover */
+    transition: 0.3s;
+}
+
+.user-name {
+    font-size: 13px; /* Texto más pequeño como pediste */
+    font-weight: 500;
+    text-transform: none; /* Estilo más natural */
+    letter-spacing: 0.5px;
+}
+
+.account-profile-link:hover .user-avatar {
+    border-color: var(--azulC);
+    transform: scale(1.05);
+}
+
+.account-profile-link:hover .user-name {
+    color: var(--azulC);
+}
+
+/* Redes Sociales */
+.social-icons { display: flex; gap: 20px; margin-left: 30px; }
+.social-icons a { color: var(--blanco); font-size: 22px; transition: transform 0.3s, color 0.3s; }
+.social-icons a:hover { color: var(--azulC); transform: scale(1.1); }
+
+/* --- CABECERA RESPONSIVE (SIN ELIMINAR ELEMENTOS) --- */
+
+@media screen and (max-width: 1250px) {
+    .header {
+        flex-wrap: wrap; /* Permite que los elementos bajen de línea si no caben */
+        padding: 15px 20px;
+        justify-content: space-between;
+    }
+
+    .nav-links {
+        margin-left: 20px;
+        gap: 20px;
+    }
+
+    .account-links {
+        gap: 20px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .nav-links {
+        order: 3; /* El menú de navegación baja a la segunda fila */
+        width: 100%; /* Ocupa todo el ancho abajo */
+        justify-content: center;
+        margin-left: 0;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid var(--grisO);
+    }
+
+    .account-links {
+        margin-left: auto;
+    }
+
+    .social-icons {
+        margin-left: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .title {
+        font-size: 26px; /* Reducimos texto pero no lo quitamos */
+    }
+
+    .logo img {
+        height: 50px;
+    }
+
+    .user-name {
+        font-size: 11px; /* Nombre más compacto */
+        max-width: 80px; /* Limitamos ancho para que no empuje todo */
+        line-height: 1.1;
+    }
+
+    .account-links {
+        gap: 15px;
+    }
+
+    .social-icons {
+        gap: 10px; /* Juntamos las redes sociales */
+    }
+
+    .social-icons a {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .header {
+        padding: 10px;
+    }
+
+    .title {
+        font-size: 20px;
+        margin-left: 8px;
+    }
+
+    /* En móviles muy pequeños, hacemos que las redes bajen a una 3ª fila */
+    .social-icons {
+        order: 4;
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .nav-links a {
+        font-size: 11px;
+        gap: 10px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+    }
+}

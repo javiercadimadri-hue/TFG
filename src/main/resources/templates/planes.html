@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planes - Gimnasio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            color: #667eea !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        .container-main {
+            margin-top: 60px;
+            padding: 20px;
+        }
+        .planes-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .planes-header h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .plan-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+        .plan-card i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .plan-card h3 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .plan-card .precio {
+            font-size: 2rem;
+            color: #667eea;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        .plan-card .precio span {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+        .plan-card ul {
+            text-align: left;
+            list-style: none;
+            padding: 20px 0;
+            border-top: 2px solid #e2e8f0;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .plan-card ul li {
+            padding: 8px 0;
+            color: #6c757d;
+        }
+        .plan-card ul li i {
+            color: #28a745;
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+        .btn-comprar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 12px 30px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn-comprar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        .carrito-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .carrito-badge:hover {
+            transform: scale(1.1);
+            color: white;
+            text-decoration: none;
+        }
+        .contador-carrito {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<div th:insert="~{fragments/header :: header}"></div>
+
+<div class="container-main">
+    <div class="planes-header">
+        <h1><i class="bi bi-dumbbell"></i> Nuestros Planes</h1>
+        <p>Elige el plan que mejor se adapte a tu objetivo</p>
+    </div>
+
+    <div id="alertaCarrito"></div>
+
+    <div class="row">
+        <!-- Plan 1: Boxeo Básico -->
+        <div class="col-md-4">
+            <div class="plan-card">
+                <i class="bi bi-hand-fist"></i>
+                <h3>Boxeo Básico</h3>
+                <div class="precio">19.99<span>€/mes</span></div>
+                <ul>
+                    <li><i class="bi bi-check-circle-fill"></i> 8 clases de boxeo al mes</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Acceso a sala de saco</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Entrenador disponible</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Comunidad de boxeadores</li>
+                </ul>
+                <button class="btn-comprar" onclick="manejarCompra(1, 'Boxeo Básico', 19.99)">
+                    <i class="bi bi-cart-plus"></i> Añadir al carrito
+                </button>
+            </div>
+        </div>
+
+        <!-- Plan 2: Musculación Completa -->
+        <div class="col-md-4">
+            <div class="plan-card" style="border: 3px solid #667eea;">
+                <i class="bi bi-fire" style="color: #ff6b6b;"></i>
+                <h3>Musculación Completa</h3>
+                <p style="color: #667eea; font-weight: 700;">⭐ MÁS POPULAR</p>
+                <div class="precio">29.99<span>€/mes</span></div>
+                <ul>
+                    <li><i class="bi bi-check-circle-fill"></i> Acceso ilimitado al gimnasio</li>
+                    <li><i class="bi bi-check-circle-fill"></i> 4 clases de musculación</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Entrenador personal 2x/mes</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Acceso a aplicación móvil</li>
+                </ul>
+                <button class="btn-comprar" onclick="manejarCompra(2, 'Musculación Completa', 29.99)">
+                    <i class="bi bi-cart-plus"></i> Añadir al carrito
+                </button>
+            </div>
+        </div>
+
+        <!-- Plan 3: Premium VIP -->
+        <div class="col-md-4">
+            <div class="plan-card">
+                <i class="bi bi-star-fill" style="color: #ffc107;"></i>
+                <h3>Premium VIP</h3>
+                <div class="precio">49.99<span>€/mes</span></div>
+                <ul>
+                    <li><i class="bi bi-check-circle-fill"></i> Acceso 24/7 al gimnasio</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Clases ilimitadas</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Entrenador personal ilimitado</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Nutricionista colaborador</li>
+                </ul>
+                <button class="btn-comprar" onclick="manejarCompra(3, 'Premium VIP', 49.99)">
+                    <i class="bi bi-cart-plus"></i> Añadir al carrito
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botón flotante del carrito -->
+<a href="/carrito" class="carrito-badge">
+    <i class="bi bi-cart3"></i>
+    <span class="contador-carrito" id="contadorCarrito">0</span>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/app.js" defer></script>
+<script src="/carrito.js" defer></script>
+<script src="/navbar.js" defer></script>
+<script src="/planes.js" defer></script>
+<script src="/debug.js" defer></script>
+</body>
+</html>
