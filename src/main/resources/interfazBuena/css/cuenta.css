@@ -1,0 +1,583 @@
+
+/* --- FUENTES --- */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* --- VARIABLES --- */
+:root {
+    --azul: #043EBD;
+    --azulC: #3A6FF2;
+    --negro: #000000;
+    --grisC: #858585;
+    --grisO: #1C1B1B;
+    --blanco: #FFFFFF;
+}
+
+/* --- ESTILOS GENERALES --- */
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--negro);
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    color: var(--blanco);
+    overflow-x: hidden;
+}
+
+/* --- HEADER --- */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px 40px;
+    background-color: var(--negro);
+    border-bottom: 1px solid var(--grisO);
+}
+
+.logo img { height: 70px; width: auto; }
+
+.title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 35px;
+    color: var(--blanco);
+    text-transform: uppercase;
+    margin-left: 15px;
+    line-height: 1;
+}
+
+.title-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+
+.title-link:visited {
+    color: inherit;
+}
+
+.nav-links { display: flex; gap: 45px; margin-left: 120px; }
+.nav-links a {
+    text-decoration: none;
+    color: var(--blanco);
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.3s, transform 0.3s;
+}
+.nav-links a:hover { color: var(--azulC); transform: scale(1.1); }
+
+/* --- SECCIÓN ACCOUNT LINKS (ADMIN, CARRITO, PERFIL) --- */
+.account-links { 
+    display: flex; 
+    gap: 45px; /* Mayor separación entre elementos como pediste */
+    margin-left: auto; 
+    align-items: center; 
+}
+
+/* Enlace Panel Admin */
+.admin-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--grisC);
+    font-size: 10px; /* Tamaño reducido para jerarquía */
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+.admin-link i { font-size: 18px; margin-bottom: 4px; }
+.admin-link:hover { color: var(--azulC); transform: translateY(-2px); }
+
+/* Icono Carrito */
+.cart-icon-link {
+    color: var(--blanco);
+    font-size: 24px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.cart-icon-link:hover { color: var(--azulC); transform: scale(1.1); }
+
+/* Enlace Perfil Personalizado (Sin fondo ni bordes) */
+.account-profile-link {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espacio entre imagen y nombre */
+    text-decoration: none;
+    color: var(--blanco);
+    transition: 0.3s;
+}
+
+.user-avatar {
+    width: 48px; /* Imagen más grande */
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid transparent; /* Evita saltos en el hover */
+    transition: 0.3s;
+}
+
+.user-name {
+    font-size: 13px; /* Texto más pequeño como pediste */
+    font-weight: 500;
+    text-transform: none; /* Estilo más natural */
+    letter-spacing: 0.5px;
+}
+
+.account-profile-link:hover .user-avatar {
+    border-color: var(--azulC);
+    transform: scale(1.05);
+}
+
+.account-profile-link:hover .user-name {
+    color: var(--azulC);
+}
+
+/* Redes Sociales */
+.social-icons { display: flex; gap: 20px; margin-left: 30px; }
+.social-icons a { color: var(--blanco); font-size: 22px; transition: transform 0.3s, color 0.3s; }
+.social-icons a:hover { color: var(--azulC); transform: scale(1.1); }
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.account-container {
+    display: grid;
+    grid-template-columns: 380px 1fr; 
+    gap: 100px; 
+    max-width: 1500px;
+    margin: 60px auto;
+    padding: 0 50px;
+    align-items: start; /* Importante para que el sticky funcione */
+}
+
+/* --- SIDEBAR IZQUIERDA (DATOS DE USUARIO FIJOS) --- */
+.profile-sidebar {
+    position: sticky;
+    top: 40px; /* Distancia desde la parte superior al hacer scroll */
+}
+
+.sidebar-card {
+    background-color: var(--grisO);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 35px;
+    z-index: 1;
+}
+
+/* EFECTO GLOW (Sin movimiento) */
+.profile-glow-effect {
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+}
+
+.profile-glow-effect:hover {
+    border-color: var(--azulC);
+    box-shadow: 0 0 30px rgba(58, 111, 242, 0.2);
+}
+
+.sidebar-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--azulC);
+    display: block;
+    margin: 0 auto 30px;
+    padding: 5px;
+}
+
+.data-group {
+    margin-bottom: 18px;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 8px;
+}
+
+.data-group label {
+    display: block;
+    font-size: 11px;
+    color: var(--grisC); /* Labels en gris */
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.data-group p { 
+    margin: 5px 0 0; 
+    font-size: 15px; 
+    color: var(--blanco); 
+}
+
+.btn-edit-profile {
+    width: 100%;
+    background-color: transparent;
+    border: 2px solid var(--azul);
+    color: var(--blanco);
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+.btn-edit-profile:hover { background-color: var(--azul); box-shadow: 0 0 15px rgba(4, 62, 189, 0.5); }
+
+/* --- CONTENIDO DERECHO --- */
+.profile-main-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 45px;
+    text-transform: uppercase;
+    margin: 0 0 25px 0;
+}
+
+.plan-info-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #1c1b1b, #0a0a0a);
+    padding: 20px 30px;
+    border-left: 5px solid var(--azulC);
+    border-radius: 4px;
+    margin-bottom: 50px;
+    max-width: 600px; /* Rectángulo de plan estrecho */
+}
+
+.plan-highlight { 
+    font-family: 'Oswald', sans-serif; 
+    font-size: 22px; 
+    color: var(--azulC); 
+    text-transform: uppercase; 
+}
+
+.btn-swap {
+    color: var(--blanco);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 1px solid var(--grisC);
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+.btn-swap:hover { border-color: var(--azulC); color: var(--azulC); }
+
+.section-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 30px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+}
+
+/* PEDIDOS CON BORDE AZUL Y EFECTO HOVER */
+.order-box {
+    background-color: var(--grisO);
+    border: 1px solid var(--azul); 
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 35px;
+    transition: all 0.3s ease;
+}
+
+.order-box:hover {
+    border-color: var(--azulC);
+    box-shadow: 0 0 20px rgba(58, 111, 242, 0.2);
+    background-color: #222;
+}
+
+.order-top {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.order-total-price { 
+    font-family: 'Oswald', sans-serif; 
+    font-size: 28px; 
+    color: var(--azulC); 
+}
+
+.product-row {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.product-row img { width: 55px; height: 55px; object-fit: contain; }
+
+.p-name {
+    flex-grow: 1;
+    font-size: 16px;
+    margin-left: 20px;
+}
+
+.p-values-right {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+}
+
+.p-price {
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    color: var(--blanco);
+    min-width: 80px;
+    text-align: right;
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 1200px) {
+    .account-container { grid-template-columns: 1fr; gap: 40px; }
+    .profile-sidebar { position: static; } /* Quitamos el fijo en móvil */
+    .sidebar-card { max-width: 500px; margin: 0 auto; }
+}
+
+/* EFECTO HOVER EN RECTÁNGULOS DE PEDIDOS */
+.order-box {
+    background-color: var(--grisO);
+    border: 1px solid var(--azul); 
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 35px;
+    transition: all 0.3s ease; /* Transición suave para el color y la sombra */
+}
+
+.order-box:hover {
+    border-color: var(--azulC); /* El borde se vuelve más claro */
+    box-shadow: 0 0 20px rgba(58, 111, 242, 0.2); /* Resplandor azul sutil */
+    background-color: #222; /* Ligero cambio de tono de fondo */
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 1200px) {
+    .account-container { grid-template-columns: 1fr; gap: 40px; }
+    .sidebar-card { position: static; max-width: 500px; margin: 0 auto; }
+}
+
+/* --- FOOTER (Restaurado Hovers) --- */
+.footer {
+    background-color: var(--negro);
+    padding: 60px 20px 20px 20px;
+    border-top: 1px solid var(--grisO);
+    color: var(--blanco);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 40px;
+    text-align: center;
+}
+
+.footer-column h3 { font-family: 'Oswald'; color: var(--azulC); margin-bottom: 20px; text-transform: uppercase; }
+.footer-column ul { list-style: none; padding: 0; }
+.footer-column ul li { margin-bottom: 12px; }
+.footer-column a {
+    color: var(--grisC);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+.footer-column a:hover { color: var(--blanco); text-decoration: underline; }
+
+.footer-bottom { text-align: center; margin-top: 50px; border-top: 1px solid var(--grisO); padding-top: 20px; color: var(--grisC); font-size: 13px; }
+
+/* --- CABECERA RESPONSIVE (SIN ELIMINAR ELEMENTOS) --- */
+
+@media screen and (max-width: 1250px) {
+    .header {
+        flex-wrap: wrap; /* Permite que los elementos bajen de línea si no caben */
+        padding: 15px 20px;
+        justify-content: space-between;
+    }
+
+    .nav-links {
+        margin-left: 20px;
+        gap: 20px;
+    }
+
+    .account-links {
+        gap: 20px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .nav-links {
+        order: 3; /* El menú de navegación baja a la segunda fila */
+        width: 100%; /* Ocupa todo el ancho abajo */
+        justify-content: center;
+        margin-left: 0;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid var(--grisO);
+    }
+
+    .account-links {
+        margin-left: auto;
+    }
+
+    .social-icons {
+        margin-left: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .title {
+        font-size: 26px; /* Reducimos texto pero no lo quitamos */
+    }
+
+    .logo img {
+        height: 50px;
+    }
+
+    .user-name {
+        font-size: 11px; /* Nombre más compacto */
+        max-width: 80px; /* Limitamos ancho para que no empuje todo */
+        line-height: 1.1;
+    }
+
+    .account-links {
+        gap: 15px;
+    }
+
+    .social-icons {
+        gap: 10px; /* Juntamos las redes sociales */
+    }
+
+    .social-icons a {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .header {
+        padding: 10px;
+    }
+
+    .title {
+        font-size: 20px;
+        margin-left: 8px;
+    }
+
+    /* En móviles muy pequeños, hacemos que las redes bajen a una 3ª fila */
+    .social-icons {
+        order: 4;
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .nav-links a {
+        font-size: 11px;
+        gap: 10px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* --- RESPONSIVO DEL CONTENIDO (SIDEBAR Y HISTORIAL) --- */
+
+@media screen and (max-width: 1024px) {
+    .account-container {
+        grid-template-columns: 1fr; /* Una sola columna */
+        gap: 40px;
+        padding: 0 20px;
+        margin: 30px auto;
+    }
+
+    .profile-sidebar {
+        position: static; /* Quitamos el sticky para que fluya con el resto */
+    }
+
+    .sidebar-card {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .profile-main-title {
+        text-align: center;
+        font-size: 32px;
+    }
+
+    .plan-info-box {
+        margin: 0 auto 40px; /* Centramos el cuadro de plan */
+    }
+}
+
+@media screen and (max-width: 768px) {
+    /* Ajustes en los pedidos para evitar solapamiento */
+    .order-top {
+        flex-direction: column; /* El precio total baja debajo de la meta-data */
+        gap: 10px;
+    }
+
+    .order-total-price {
+        text-align: left;
+        font-size: 24px;
+    }
+
+    .product-row {
+        flex-wrap: wrap; /* Permite que el precio del producto baje si no hay espacio */
+        gap: 10px;
+    }
+
+    .p-name {
+        font-size: 14px;
+        min-width: 100%; /* El nombre ocupa su propia línea en móviles pequeños */
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .p-values-right {
+        width: 100%;
+        justify-content: space-between;
+        gap: 0;
+    }
+
+    .p-price {
+        text-align: right;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .sidebar-card {
+        padding: 20px;
+    }
+
+    .sidebar-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-main-title {
+        font-size: 26px;
+    }
+
+    .plan-info-box {
+        flex-direction: column; /* El botón de cambiar plan baja debajo del texto */
+        text-align: center;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .btn-swap {
+        width: 100%;
+    }
+
+    .order-box {
+        padding: 15px;
+    }
+
+    .data-group p {
+        font-size: 14px;
+    }
+}

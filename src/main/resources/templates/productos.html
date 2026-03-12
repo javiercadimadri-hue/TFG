@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Gimnasio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container-main {
+            margin-top: 60px;
+            padding: 20px;
+        }
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .productos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .productos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .producto-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .producto-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .producto-imagen-container {
+            width: 100%;
+            height: 280px;
+            background: #f0f0f0;
+            overflow: hidden;
+        }
+        
+        .producto-imagen {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .producto-info {
+            padding: 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .producto-nombre {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+            min-height: 2.2em;
+        }
+        
+        .producto-categoria {
+            color: #667eea;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .producto-precio {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .btn-carrito {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin-top: auto;
+        }
+        
+        .btn-carrito:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-carrito:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar/Header -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-house-door"></i> Mi Proyecto
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <!-- Botón de Catálogo -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/productos"><i class="bi bi-shop"></i> Catálogo</a>
+                </li>
+                <!-- Botón de Carrito -->
+                <li class="nav-item" id="navCarrito" style="display: none;">
+                    <a class="nav-link" href="/carrito" style="position: relative;">
+                        <i class="bi bi-cart3" style="font-size: 1.2rem;"></i>
+                        <span class="contador-carrito-nav" id="contadorCarritoNav" style="
+                            position: absolute;
+                            top: -5px;
+                            right: -5px;
+                            background: #dc3545;
+                            color: white;
+                            border-radius: 50%;
+                            width: 20px;
+                            height: 20px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 0.7rem;
+                            font-weight: 700;
+                        ">0</span>
+                    </a>
+                </li>
+                <!-- Opciones para no logueados -->
+                <li class="nav-item" id="navLogin">
+                    <a class="nav-link" href="/usuarios/login"><i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión</a>
+                </li>
+                <li class="nav-item" id="navRegistro">
+                    <a class="nav-link" href="/usuarios/registro"><i class="bi bi-person-plus"></i> Registrarse</a>
+                </li>
+                <!-- Opciones para logueados -->
+                <li class="nav-item dropdown" id="navUsuarioDropdown" style="display:none;">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="usuarioDropdown" role="button" data-bs-toggle="dropdown">
+                        <img id="fotoUsuarioNav" src="" alt="Perfil" style="width:32px;height:32px;border-radius:50%;object-fit:cover;display:none;margin-right:8px;" />
+                        <i class="bi bi-person-circle" id="defaultUserIcon" style="font-size:1.2rem;margin-right:6px;"></i>
+                        <span id="nombreUsuarioNav">Usuario</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
+                        <li><a class="dropdown-item" href="/cuenta"><i class="bi bi-person"></i> Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="/carrito"><i class="bi bi-cart3"></i> Mi Carrito</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="cerrarSesionNav(event)"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar-custom {
+        background: rgba(255, 255, 255, 0.95) !important;
+        box-shadow: 0 2px 10px rgba(102, 126, 234, 0.15);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+    }
+    .navbar-brand {
+        color: #667eea !important;
+        font-weight: 700;
+        font-size: 1.3rem;
+    }
+    .nav-link {
+        color: #6c757d !important;
+        font-weight: 500;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+    }
+    .nav-link:hover {
+        color: #667eea !important;
+    }
+</style>
+
+<div class="container-main">
+    <div class="container">
+        <h1 style="color: white; margin-bottom: 20px;"><i class="bi bi-shop"></i> Catálogo de Productos</h1>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label"><strong>Buscar por nombre</strong></label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Ej: Mancuernas, Yoga..." />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><strong>Filtrar por categoría</strong></label>
+                    <select id="categoriaFilter" class="form-select">
+                        <option value="">Todas las categorías</option>
+                        <option value="Pesas">Pesas</option>
+                        <option value="Accesorios">Accesorios</option>
+                        <option value="Barras">Barras</option>
+                        <option value="Ropa">Ropa</option>
+                        <option value="Calzado">Calzado</option>
+                        <option value="Máquinas">Máquinas</option>
+                        <option value="Tecnología">Tecnología</option>
+                    </select>
+                </div>
+            </div>
+            <button id="btnLimpiar" class="btn btn-outline-secondary mt-3">Limpiar filtros</button>
+        </div>
+
+        <!-- Productos -->
+        <div id="loadingSpinner" class="loading" style="display:none;">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p>Cargando productos...</p>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display:none;"></div>
+
+        <div id="productosContainer" class="productos-grid"></div>
+
+        <div id="emptyMessage" style="text-align:center; color:white; padding:40px; display:none;">
+            <h4>No hay productos que coincidan con tu búsqueda</h4>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS debe cargar antes -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Scripts personalizados -->
+<script src="/app.js" defer></script>
+<script src="/navbar.js" defer></script>
+<script src="/carrito.js" defer></script>
+<script src="/productos.js" defer></script>
+</body>
+</html>

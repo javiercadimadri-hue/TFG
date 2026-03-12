@@ -1,0 +1,54 @@
+<!-- Fragmento de cabecera reutilizable: muestra header de sesión o sin sesión -->
+<div th:fragment="header">
+    <header class="header">
+        <div class="logo">
+            <a th:href="@{/}"><img th:src="@{/img/logo-recortado.PNG}" alt="Logo"></a>
+        </div>
+        <h1 class="title"><a th:href="@{/}" class="title-link">IronFit</a></h1>
+
+        <nav class="nav-links">
+            <a th:href="@{/gimnasio}">Gimnasio</a>
+            <a th:href="@{/tienda}">Tienda</a>
+            <a th:href="@{/profesionales}">Profesionales</a>
+        </nav>
+
+        <div class="account-links">
+            <div id="header-no-session">
+                <a th:href="@{/login}">Iniciar Sesión</a>
+                <a th:href="@{/registro}">Inscribirse</a>
+            </div>
+
+            <div id="header-session" style="display:none;">
+                <a th:href="@{/carrito}" class="cart-icon-link"><i class="fas fa-shopping-cart"></i></a>
+                <a th:href="@{/cuenta}" class="account-profile-link">
+                    <span class="user-identifier">Usuario</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        // Mostrar header según sesión y actualizar identificador
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const noSession = document.getElementById('header-no-session');
+                const session = document.getElementById('header-session');
+                if (token) {
+                    noSession.style.display = 'none';
+                    session.style.display = 'inline-flex';
+                    const usuarioJSON = localStorage.getItem('usuario');
+                    if (usuarioJSON) {
+                        const usuario = JSON.parse(usuarioJSON);
+                        const identifier = usuario.email || usuario.nombre || 'Usuario';
+                        const span = document.querySelector('.user-identifier');
+                        if (span) span.textContent = identifier;
+                    }
+                } else {
+                    noSession.style.display = 'inline-flex';
+                    session.style.display = 'none';
+                }
+            } catch (e) { console.error('Header init error', e); }
+        });
+    </script>
+</div>

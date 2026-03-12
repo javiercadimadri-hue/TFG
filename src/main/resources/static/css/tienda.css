@@ -1,0 +1,159 @@
+/* --- FUENTES --- */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* --- VARIABLES --- */
+:root {
+    --azul: #043EBD;
+    --azulC: #3A6FF2;
+    --negro: #000000;
+    --grisC: #858585;
+    --grisO: #1C1B1B;
+    --blanco: #FFFFFF;
+}
+
+/* --- ESTILOS GENERALES --- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--negro);
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    overflow-x: hidden;
+}
+
+/* --- HEADER --- */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px 40px;
+    background-color: var(--negro);
+    border-bottom: 1px solid var(--grisC);
+}
+
+.logo img { height: 70px; width: auto; }
+
+.title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 35px;
+    color: var(--blanco);
+    text-transform: uppercase;
+    margin-left: 15px;
+    line-height: 1;
+}
+
+/* Estilo para que el enlace del título sea invisible visualmente */
+.title-link {
+    text-decoration: none; /* Quita el subrayado */
+    color: inherit;        /* Hereda el color blanco del h1.title */
+    display: inline-block; /* Mantiene el comportamiento de bloque para el área de clic */
+}
+
+.title-link:visited {
+    color: inherit;        /* Evita que cambie de color si ya lo has visitado */
+}
+
+.nav-links { display: flex; gap: 45px; margin-left: 120px; }
+.nav-links a {
+    text-decoration: none;
+    color: var(--blanco);
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.3s, transform 0.3s;
+}
+.nav-links a:hover { color: var(--azulC); transform: scale(1.1); }
+
+.account-links { display: flex; gap: 15px; margin-left: auto; align-items: center; }
+.account-links a {
+    text-decoration: none;
+    color: var(--blanco);
+    background-color: var(--azul);
+    padding: 10px 45px;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background 0.3s;
+    white-space: nowrap;
+}
+.account-links a:hover { background-color: var(--azulC); }
+
+.social-icons { display: flex; gap: 20px; margin-left: 30px; }
+.social-icons a { color: var(--blanco); font-size: 22px; transition: transform 0.3s, color 0.3s; }
+.social-icons a:hover { color: var(--azulC); transform: scale(1.1); }
+
+
+
+
+/* --- FOOTER (Restaurado Hovers) --- */
+.footer {
+    background-color: var(--negro);
+    padding: 60px 20px 20px 20px;
+    border-top: 1px solid var(--grisO);
+    color: var(--blanco);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 40px;
+    text-align: center;
+}
+
+.footer-column h3 { font-family: 'Oswald'; color: var(--azulC); margin-bottom: 20px; text-transform: uppercase; }
+.footer-column ul { list-style: none; padding: 0; }
+.footer-column ul li { margin-bottom: 12px; }
+.footer-column a {
+    color: var(--grisC);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+.footer-column a:hover { color: var(--blanco); text-decoration: underline; }
+
+.footer-bottom { text-align: center; margin-top: 50px; border-top: 1px solid var(--grisO); padding-top: 20px; color: var(--grisC); font-size: 13px; }
+
+/* --- MEDIA QUERIES --- */
+
+/* SOLUCIÓN PARA 1366px (Laptop) */
+@media screen and (max-width: 1366px) {
+    .header {
+        padding: 10px 20px; /* Reducimos el aire lateral */
+    }
+    .nav-links {
+        margin-left: 40px; /* Reducimos el margen de 120px a 40px para que quepa */
+        gap: 25px; /* Juntamos un poco los enlaces */
+    }
+    .account-links a {
+        padding: 10px 25px; /* Botones un poco más pequeños */
+    }
+    .slider-container {
+        height: 550px; /* Bajamos un poco la altura para que no ocupe toda la pantalla */
+    }
+}
+
+/* TABLETS (768px) */
+@media screen and (max-width: 768px) {
+    .header { flex-direction: column; padding: 20px; }
+    .nav-links { margin-left: 0; margin-top: 20px; gap: 15px; flex-wrap: wrap; justify-content: center; }
+    .account-links { margin: 20px 0; }
+    .social-icons { margin-left: 0; }
+    
+    .objetivos-grid { grid-template-columns: 1fr; }
+    .objetivo-center-column { flex-direction: row; }
+    
+    .newsletter-container { flex-direction: column; text-align: center; gap: 30px; }
+}
+
+/* MÓVILES (480px) */
+@media screen and (max-width: 480px) {
+    .title { font-size: 26px; }
+    .nav-links a { font-size: 12px; }
+    .objetivo-center-column { flex-direction: column; }
+    .slider-container { height: 350px; }
+    .brand-item img { width: 100px; }
+}

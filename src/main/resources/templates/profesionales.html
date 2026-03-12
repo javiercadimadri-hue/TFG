@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/profesionales.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Tendrás que tener la carpeta de Font Awesome en el mismo directorio donde está este archivo HTML. -->
+    <link rel="stylesheet" th:href="@{/fontawesome-free-7.1.0-web/css/all.css}" type="text/css">
+    <title>IronFit - Profesionales</title>
+        <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
+</head>
+<body>
+    <!-- HEADER SIN SESIÓN -->
+    <header class="header" id="header-login">
+        <div class="logo">
+            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
+        </div>
+        <h1 class="title">IronFit</h1>
+    <nav class="nav-links">
+        <a th:href="@{/gimnasio}">Gimnasio</a>
+        <a th:href="@{/tienda}">Tienda</a>
+        <a th:href="@{/profesionales}">Profesionales</a>
+    </nav>
+        <div class="account-links">
+            <a th:href="@{/login}">Iniciar Sesión</a>
+            <a th:href="@{/registro}">Inscribirse</a>
+        </div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+    </header>
+
+    <!-- HEADER CON SESIÓN -->
+    <header class="header" id="header-cuenta" style="display: none;">
+        <div class="logo">
+            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
+        </div>
+        <h1 class="title">
+            <a th:href="@{/}" class="title-link" style="color: inherit; text-decoration: none;">IronFit</a>
+        </h1>
+        <nav class="nav-links">
+            <a th:href="@{/gimnasio}">Gimnasio</a>
+            <a th:href="@{/tienda}">Tienda</a>
+            <a th:href="@{/profesionales}">Profesionales</a>
+        </nav>
+        <div class="account-links">
+            <a th:href="@{/admin}" class="admin-link">
+                <i class="fas fa-user-shield"></i>
+                <span>Admin</span>
+            </a>
+            <a th:href="@{/carrito}" class="cart-icon-link">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            <a th:href="@{/cuenta}" class="account-profile-link">
+                <span class="user-name">MI CUENTA</span>
+            </a>
+        </div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+    </header>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            const headerLogin = document.getElementById('header-login');
+            const headerCuenta = document.getElementById('header-cuenta');
+            
+            if (token) {
+                headerLogin.style.display = 'none';
+                headerCuenta.style.display = 'flex';
+                
+                const usuarioJSON = localStorage.getItem('usuario');
+                if (usuarioJSON) {
+                    const usuario = JSON.parse(usuarioJSON);
+                    const avatarImg = headerCuenta.querySelector('.user-avatar');
+                    const userNameSpan = headerCuenta.querySelector('.user-name');
+                    
+                    if (usuario.foto && usuario.foto !== 'null') {
+                        if (avatarImg) avatarImg.src = '/img/' + usuario.foto;
+                    }
+                    if (usuario.nombre && userNameSpan) {
+                        userNameSpan.textContent = usuario.nombre;
+                    }
+                }
+            } else {
+                headerLogin.style.display = 'flex';
+                headerCuenta.style.display = 'none';
+            }
+        });
+    </script>
+
+<nav class="sub-nav">
+    <a href="#nutricionistas">Nutricionistas</a>
+    <a href="#fisioterapeutas">Fisioterapeutas</a>
+    <a href="#entrenadores">Entrenadores</a>
+</nav>
+
+<main class="profesionales-main">
+        
+        <section class="pro-section" id="nutricionistas">
+            <h2 class="pro-section-title">Nutricionistas</h2>
+            <div class="circles-container">
+                <div class="pro-circle" style="background-image: url('img/nutri1.2.webp');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">Ana García</span>
+                        <span class="pro-role">Nutrición Deportiva</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>623 111 222</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pro-circle" style="background-image: url('img/nutri2.jpg');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">Carlos Santigo</span>
+                        <span class="pro-role">Dietista Clínico</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>693 333 444</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pro-circle" style="background-image: url('img/nutri3.webp');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">Lucía Sanz</span>
+                        <span class="pro-role">Especialista en Ayuno</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>677 555 666</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pro-section" id="fisioterapeutas">
+            <h2 class="pro-section-title">Fisioterapeutas</h2>
+            <div class="circles-container">
+                <div class="pro-circle" style="background-image: url('img/fisio1.png');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">Roberto Cano</span>
+                        <span class="pro-role">Fisio Osteópata</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>611 777 888</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pro-circle" style="background-image: url('img/fisio2.webp');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">Elena Martínez</span>
+                        <span class="pro-role">Rehabilitación</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>656 999 000</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pro-circle" style="background-image: url('img/fisio3.jpg');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">David Ruiz</span>
+                        <span class="pro-role">Terapia Manual</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>689 123 456</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pro-section" id="entrenadores">
+            <h2 class="pro-section-title">Entrenadores</h2>
+            <div class="circles-container">
+                <div class="pro-circle" style="background-image: url('img/coach1.webp');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">Sergi Fit</span>
+                        <span class="pro-role">Powerlifting Coach</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>722 560 001</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pro-circle" style="background-image: url('img/coach2.webp');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">Paula Power</span>
+                        <span class="pro-role">Crossfit Expert</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>633 022 002</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pro-circle" style="background-image: url('img/coach3.avif');">
+                    <div class="pro-circle-overlay">
+                        <span class="pro-name">Javier Strong</span>
+                        <span class="pro-role">Bodybuilding</span>
+                        <div class="pro-contact">
+                            <i class="fas fa-phone"></i>
+                            <i class="fab fa-whatsapp"></i>
+                            <span>634 000 003</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>Únete a nosotros</h3>
+            <ul>
+                <li><a href="#">Trabaja con nosotros</a></li>
+                <li><a href="#">Embajadores</a></li>
+                <li><a href="#">Corporativo</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-column">
+            <h3>Ayuda e Información</h3>
+            <ul>
+                <li><a href="#">Soporte</a></li>
+                <li><a href="#">Preguntas frecuentes</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Donde encontrarnos</h3>
+            <ul>
+                <li><a href="#">Nuestros centros</a></li>
+                <li><a href="#">Mapa del sitio</a></li>
+                <li><a href="#">Horarios</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Condiciones</h3>
+            <ul>
+                <li><a href="#">Política de privacidad</a></li>
+                <li><a href="#">Aviso legal</a></li>
+                <li><a href="#">Cookies</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+</body>
+</html>
