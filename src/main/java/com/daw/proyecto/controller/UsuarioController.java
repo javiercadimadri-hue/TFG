@@ -1,6 +1,7 @@
 package com.daw.proyecto.controller;
 
 import com.daw.proyecto.dto.UsuarioDTO;
+import com.daw.proyecto.repository.ProductosRepository;
 import com.daw.proyecto.service.UsuarioService;
 import com.daw.proyecto.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,13 @@ import java.util.UUID;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.math.BigDecimal;
+
+import com.daw.proyecto.service.PedidosService;
+import com.daw.proyecto.service.Detalle_pedidosService;
+import com.daw.proyecto.dto.PedidosDTO;
+import com.daw.proyecto.dto.Detalle_pedidosDTO;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -35,6 +43,15 @@ public class UsuarioController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ProductosRepository productoRepository;
+
+    @Autowired
+    private PedidosService pedidosService;
+
+    @Autowired
+    private Detalle_pedidosService detalle_pedidosService;
 
     // Obtener todos los usuarios
     @GetMapping
@@ -267,7 +284,7 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    // Subir o actualizar foto de perfil
+    // Subir o actualizar foto de perfil - Mejorado
     @PostMapping("/{id}/foto")
     public ResponseEntity<?> subirFoto(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
         try {
@@ -280,16 +297,29 @@ public class UsuarioController {
                 return ResponseEntity.badRequest().body(Map.of("error", "No file provided"));
             }
 
+            // Validar que sea una imagen
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El archivo debe ser una imagen válida"));
+            }
+
             String uploadsDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator;
             File dir = new File(uploadsDir);
-            if (!dir.exists()) dir.mkdirs();
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
 
             UsuarioDTO usuarioDTO = usuarioOpt.get();
 
             // Eliminar la imagen anterior si existe
             if (usuarioDTO.getFoto() != null && !usuarioDTO.getFoto().isEmpty()) {
                 Path oldFilePath = Paths.get(uploadsDir + usuarioDTO.getFoto());
-                Files.deleteIfExists(oldFilePath);
+                try {
+                    Files.deleteIfExists(oldFilePath);
+                    System.out.println("Foto anterior eliminada: " + usuarioDTO.getFoto());
+                } catch (Exception e) {
+                    System.err.println("No se pudo eliminar foto anterior: " + e.getMessage());
+                }
             }
 
             // Generar un nombre aleatorio para la nueva imagen
@@ -300,21 +330,139 @@ public class UsuarioController {
             }
             String filename = UUID.randomUUID().toString() + ext;
             Path target = Paths.get(uploadsDir + filename);
+            
             try {
                 Files.copy(file.getInputStream(), target);
+                System.out.println("Foto guardada exitosamente: " + filename + " en " + uploadsDir);
             } catch (Exception e) {
                 System.err.println("Error al guardar la imagen: " + e.getMessage());
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "No se pudo guardar la imagen"));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("error", "No se pudo guardar la imagen"));
             }
 
             // Actualizar el usuario con la nueva imagen
             usuarioDTO.setFoto(filename);
-            usuarioService.save(usuarioDTO);
+            UsuarioDTO usuarioActualizado = usuarioService.save(usuarioDTO);
 
-            return ResponseEntity.ok(Map.of("fotoUrl", "/api/usuarios/" + id + "/foto"));
+            // Devolver información completa de la foto y usuario
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("mensaje", "Foto actualizada correctamente");
+            response.put("fotoFilename", filename);
+            response.put("fotoUrl", "/api/usuarios/" + id + "/foto");
+            response.put("usuario", usuarioActualizado);
+            
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+            System.err.println("Error general en subirFoto: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error: " + e.getMessage()));
+        }
+    }
+
+    // Obtener información del plan y fecha de expiración del usuario (incluye imagen del plan)
+    @GetMapping("/{id}/plan-expiracion")
+    public ResponseEntity<?> obtenerPlanExpiracion(@PathVariable Integer id) {
+        try {
+            var usuarioOpt = usuarioService.findById(id);
+            if (usuarioOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            UsuarioDTO usuario = usuarioOpt.get();
+            
+            Map<String, Object> planInfo = new HashMap<>();
+            planInfo.put("plan", usuario.getPlan() != null ? usuario.getPlan() : "Ninguno");
+            planInfo.put("fechaExpiracion", usuario.getFechaExpiracionPlan() != null ? usuario.getFechaExpiracionPlan().getTime() : null);
+            planInfo.put("fotoFilename", usuario.getFoto() != null ? usuario.getFoto() : null);
+
+            // Imagen del plan (extraída de la tabla Productos, usando el nombre del plan)
+            String planImagenUrl = null;
+            if (usuario.getPlan() != null && !usuario.getPlan().isEmpty()) {
+                productoRepository.findByNombre(usuario.getPlan()).ifPresent(producto -> {
+                    String imagen = producto.getImagen();
+                    if (imagen != null && !imagen.isBlank()) {
+                        // Si es un path relativo, asegurarnos de que empiece con '/'
+                        if (!imagen.startsWith("http") && !imagen.startsWith("/")) {
+                            imagen = "/" + imagen;
+                        }
+                    }
+                    planInfo.put("planImagenUrl", imagen);
+                });
+            }
+
+            return ResponseEntity.ok(planInfo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // Obtener historial completo de pedidos del usuario con detalles y fotos
+    @GetMapping("/{id}/historial-pedidos")
+    public ResponseEntity<?> obtenerHistorialPedidos(@PathVariable Integer id) {
+        try {
+            var usuarioOpt = usuarioService.findById(id);
+            if (usuarioOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Obtener todos los pedidos del usuario
+            List<PedidosDTO> pedidos = pedidosService.getPedidosPorUsuario(id);
+            
+            List<Map<String, Object>> pedidosConDetalles = new ArrayList<>();
+            
+            for (PedidosDTO pedido : pedidos) {
+                Map<String, Object> pedidoInfo = new HashMap<>();
+                pedidoInfo.put("id_pedido", pedido.getId_pedido());
+                pedidoInfo.put("fecha", pedido.getFecha() != null ? pedido.getFecha().getTime() : null);
+                pedidoInfo.put("total", pedido.getTotal());
+                pedidoInfo.put("estado", pedido.getEstado());
+                
+                // Obtener detalles del pedido
+                List<Detalle_pedidosDTO> detalles = detalle_pedidosService.findByPedidoId(pedido.getId_pedido());
+                List<Map<String, Object>> detallesConFotos = new ArrayList<>();
+                
+                for (Detalle_pedidosDTO detalle : detalles) {
+                    Map<String, Object> detalleInfo = new HashMap<>();
+                    detalleInfo.put("id_detalle", detalle.getId_detalle());
+                    detalleInfo.put("cantidad", detalle.getCantidad());
+                    detalleInfo.put("precio_unitario", detalle.getPrecio_unitario());
+                    // Calcular subtotal: precio_unitario * cantidad
+                    BigDecimal subtotal = detalle.getPrecio_unitario().multiply(BigDecimal.valueOf(detalle.getCantidad()));
+                    detalleInfo.put("subtotal", subtotal);
+                    
+                    // Obtener información del producto/plan
+                    productoRepository.findById(detalle.getId_producto()).ifPresent(producto -> {
+                        detalleInfo.put("id_producto", detalle.getId_producto());
+                        detalleInfo.put("nombre", producto.getNombre());
+                        detalleInfo.put("descripcion", producto.getDescripcion());
+                        detalleInfo.put("categoria", producto.getCategoria());
+                        
+                        // Foto del producto/plan
+                        String imagen = producto.getImagen();
+                        if (imagen != null && !imagen.isBlank()) {
+                            // Si es un path relativo, asegurarnos de que empiece con '/'
+                            if (!imagen.startsWith("http") && !imagen.startsWith("/")) {
+                                imagen = "/" + imagen;
+                            }
+                        }
+                        detalleInfo.put("imagen", imagen);
+                    });
+                    
+                    detallesConFotos.add(detalleInfo);
+                }
+                
+                pedidoInfo.put("detalles", detallesConFotos);
+                pedidosConDetalles.add(pedidoInfo);
+            }
+
+            return ResponseEntity.ok(pedidosConDetalles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
 

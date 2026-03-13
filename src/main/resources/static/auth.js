@@ -62,13 +62,19 @@ function registrarUsuario() {
         },
         body: JSON.stringify(usuarioData)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (response.ok || data.id_usuario) {
+    .then(response => {
+        return response.json().then(data => ({
+            ok: response.ok,
+            status: response.status,
+            data: data
+        }));
+    })
+    .then(result => {
+        if (result.ok || result.data.id_usuario) {
             alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
             window.location.href = '/login';
         } else {
-            alert('Error en el registro: ' + (data.error || 'Intenta de nuevo'));
+            alert('Error en el registro: ' + (result.data.error || 'Intenta de nuevo'));
         }
     })
     .catch(error => {
@@ -108,6 +114,15 @@ function iniciarSesion() {
             // Guardar token en localStorage
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('usuario', JSON.stringify(data.usuario));
+            
+            // Guardar token en una cookie que se envíe en todos los requests
+            document.cookie = `authToken=${data.token}; path=/; max-age=${86400}; SameSite=Lax`;
+            
+            // Guardar ID del usuario en una cookie simple para Thymeleaf
+            document.cookie = `userId=${data.usuario.id_usuario}; path=/; max-age=${86400}; SameSite=Lax`;
+            
+            console.log('✓ Token y userId guardados en cookie');
+            console.log('✓ UserId: ' + data.usuario.id_usuario);
             
             alert('¡Bienvenido ' + data.usuario.nombre + '!');
             window.location.href = '/inicio';

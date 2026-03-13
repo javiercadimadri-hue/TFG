@@ -36,6 +36,12 @@ public class Detalle_pedidosService {
         return detalle_pedidosRepository.findById(id).map(this::convertToDTO);
     }
 
+    public List<Detalle_pedidosDTO> findByPedidoId(Integer idPedido) {
+        return detalle_pedidosRepository.findByPedidoId(idPedido).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public Detalle_pedidosDTO save(Detalle_pedidosDTO detalle_pedidosDTO) {
         Detalle_pedidos detalle_pedidos = convertToEntity(detalle_pedidosDTO);
         Detalle_pedidos savedDetalle_pedidos = detalle_pedidosRepository.save(detalle_pedidos);

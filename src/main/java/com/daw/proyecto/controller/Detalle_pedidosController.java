@@ -20,6 +20,12 @@ public class Detalle_pedidosController {
         return detalle_pedidosService.findAll();
     }
 
+    // Obtener todos los detalles de un pedido específico
+    @GetMapping("/pedido/{idPedido}")
+    public List<Detalle_pedidosDTO> getDetallesByPedido(@PathVariable Integer idPedido) {
+        return detalle_pedidosService.findByPedidoId(idPedido);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Detalle_pedidosDTO> getDetallePedidoById(@PathVariable Integer id) {
         return detalle_pedidosService.findById(id)

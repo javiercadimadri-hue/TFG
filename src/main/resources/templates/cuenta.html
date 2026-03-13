@@ -14,7 +14,8 @@
     <aside class="profile-sidebar">
         <div class="sidebar-card profile-glow-effect"> 
             <div class="profile-pic-container">
-                <img src="img/default-profile.jpg" alt="Foto de perfil" class="sidebar-avatar">
+                <!-- La foto se carga dinámicamente desde el endpoint GET -->
+                <img id="fotoPerfil" src="img/default-profile.jpg" alt="Foto de perfil" class="sidebar-avatar">
                 <button class="btn-upload-photo" id="btn-upload-photo" title="Cambiar foto de perfil">
                     <i class="fas fa-camera"></i>
                 </button>
@@ -44,93 +45,44 @@
 
     <section class="account-content">
     <div class="content-header">
-        <h1 class="profile-main-title">Cargando...</h1>
+        <h1 class="profile-main-title" th:text="${usuario?.nombre} ?: 'Cargando...'">Cargando...</h1>
         <div class="plan-info-box">
             <div class="plan-text">
                 <span class="plan-tag">Plan actual:</span>
-                <span class="plan-highlight">Cargando...</span>
-                <span class="plan-tag" style="margin-left: 15px; display: none;" id="plan-expiration-label">Expira el:</span>
-                <span class="plan-expiration" id="plan-expiration-date" style="display: none; font-weight: bold; color: var(--blanco);"></span>
+                <p id="planNombre" class="p-plan" th:text="${plan} ?: 'Ninguno'">Cargando...</p>
+                <div style="margin-top: 10px;">
+                    <span class="plan-tag">Expira el:</span>
+                    <p id="planFecha" class="p-plan-expiration" th:text="${fechaExpiracion} ? ${#dates.format(fechaExpiracion, 'dd/MM/yyyy')} : '--'">--</p>
+                </div>
             </div>
             <a th:href="@{/gimnasio}" class="btn-swap">Cambiar plan</a>
         </div>
     </div>
 
     <div class="orders-history" id="historial-pedidos">
-        <p style="text-align: center; color: #999;">Cargando historial de pedidos...</p>
-        <h2 class="section-title">Historial de pedidos</h2>
-
-        <div class="order-box">
-            <div class="order-top">
-                <div class="order-meta">
-                    <p><strong>Nº Orden:</strong> #IF-98421</p>
-                    <p><strong>Fecha:</strong> 14/02/2026</p>
+        <h3>Historial de pedidos</h3>
+        <div id="pedidos-container">
+            <div th:if="${pedidos != null and !pedidos.isEmpty()}" th:each="pedido : ${pedidos}" class="pedido">
+                <div class="pedido-header">
+                    <h4>Pedido #[<span th:text="${pedido.id_pedido}">123</span>]</h4>
+                    <p class="pedido-fecha">Fecha: <span th:text="${#dates.format(pedido.fecha, 'dd/MM/yyyy')}">01/01/2024</span></p>
+                    <p class="pedido-total">Total: <span th:text="${#numbers.formatDecimal(pedido.total, 1, 2)} + '€'">0.00€</span></p>
+                    <p class="pedido-estado">Estado: <span th:text="${pedido.estado}">Pendiente</span></p>
                 </div>
-                <div class="order-total-price">77.99€</div>
-            </div>
-            <p class="products-label">Productos</p>
-            <div class="product-row">
-                <img src="img/proteinaChoco.png" alt="Producto">
-                <span class="p-name">Proteína Whey 2kg</span>
-                <div class="p-values-right">
-                    <span class="p-qty">x1</span>
-                    <span class="p-price">59.99€</span>
-                </div>
-            </div>
-            <div class="product-row">
-                <img src="img/barritaEner.png" alt="Producto">
-                <span class="p-name">Barrita Energética Brownie</span>
-                <div class="p-values-right">
-                    <span class="p-qty">x1</span>
-                    <span class="p-price">18.00€</span>
+                <div class="pedido-detalles">
+                    <div th:if="${pedido.detalles != null and !pedido.detalles.isEmpty()}" th:each="detalle : ${pedido.detalles}" class="pedido-item">
+                        <img th:src="${detalle.imagen != null and detalle.imagen.startsWith('http')} ? ${detalle.imagen} : (${detalle.imagen != null} ? ${'/api/productos/' + detalle.id_producto + '/imagen'} : 'img/producto-default.png')" 
+                             th:alt="${detalle.nombre}" class="pedido-foto">
+                        <div class="item-info">
+                            <p><strong th:text="${detalle.nombre}">Producto</strong></p>
+                            <p>Cantidad: <span th:text="${detalle.cantidad}">1</span></p>
+                            <p>Precio unitario: <span th:text="${#numbers.formatDecimal(detalle.precio_unitario, 1, 2)} + '€'">0.00€</span></p>
+                            <p>Subtotal: <span th:text="${#numbers.formatDecimal(detalle.subtotal, 1, 2)} + '€'">0.00€</span></p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="order-box">
-            <div class="order-top">
-                <div class="order-meta">
-                    <p><strong>Nº Orden:</strong> #IF-97500</p>
-                    <p><strong>Fecha:</strong> 28/01/2026</p>
-                </div>
-                <div class="order-total-price">45.50€</div>
-            </div>
-            <p class="products-label">Productos</p>
-            <div class="product-row">
-                <img src="img/creatina.png" alt="Producto">
-                <span class="p-name">Creatina Monohidratada 500g</span>
-                <div class="p-values-right">
-                    <span class="p-qty">x1</span>
-                    <span class="p-price">45.50€</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="order-box">
-            <div class="order-top">
-                <div class="order-meta">
-                    <p><strong>Nº Orden:</strong> #IF-96210</p>
-                    <p><strong>Fecha:</strong> 10/01/2026</p>
-                </div>
-                <div class="order-total-price">32.90€</div>
-            </div>
-            <p class="products-label">Productos</p>
-            <div class="product-row">
-                <img src="img/shaker.png" alt="Producto">
-                <span class="p-name">Shaker IronFit Pro - Edición Acero</span>
-                <div class="p-values-right">
-                    <span class="p-qty">x1</span>
-                    <span class="p-price">12.95€</span>
-                </div>
-            </div>
-            <div class="product-row">
-                <img src="img/magnesio.png" alt="Producto">
-                <span class="p-name">Magnesio Líquido 250ml</span>
-                <div class="p-values-right">
-                    <span class="p-qty">x1</span>
-                    <span class="p-price">19.95€</span>
-                </div>
-            </div>
+            <p th:if="${pedidos == null or pedidos.isEmpty()}" style="text-align: center; color: #999;">No tienes pedidos realizados</p>
         </div>
     </div>
 </section>
@@ -180,7 +132,7 @@
 <script th:src="@{/user-info.js}"></script>
 
 <script>
-// Script para cambiar foto de perfil
+// Script para cambiar foto de perfil - Mejorado
 document.addEventListener('DOMContentLoaded', function() {
     const btnUploadPhoto = document.getElementById('btn-upload-photo');
     const fotoInput = document.getElementById('foto-input');
@@ -233,17 +185,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (response.ok) {
                     const result = await response.json();
+                    console.log('Foto subida correctamente:', result);
                     
-                    // La foto se guarda en uploads/, accedemos vía GET endpoint
+                    // Recargar la foto desde la API GET
                     const fotoUrl = `/api/usuarios/${usuario.id_usuario}/foto?t=` + new Date().getTime();
                     
-                    // Actualizar localStorage con la nueva info de foto
-                    usuario.foto = usuario.id_usuario + '/foto'; // Guardar referencia al endpoint
-                    localStorage.setItem('usuario', JSON.stringify(usuario));
-
                     // Actualizar imagen en la página
-                    const avatarImages = document.querySelectorAll('.user-avatar, .sidebar-avatar');
-                    avatarImages.forEach(img => {
+                    const fotoPerfil = document.getElementById('fotoPerfil');
+                    if (fotoPerfil) {
+                        fotoPerfil.src = fotoUrl;
+                    }
+                    
+                    // Actualizar en otros lugares
+                    const otrasImagenes = document.querySelectorAll('.user-avatar, .sidebar-avatar');
+                    otrasImagenes.forEach(img => {
                         img.src = fotoUrl;
                     });
 
@@ -252,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Limpiar input
                     fotoInput.value = '';
                 } else {
-                    const error = await response.text();
-                    alert('Error al subir la foto: ' + error);
+                    const error = await response.json();
+                    alert('Error al subir la foto: ' + (error.error || 'Error desconocido'));
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -265,6 +220,198 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+});
+</script>
+
+<script>
+// Cargar el plan actual y fecha de expiración desde la API
+async function cargarPlanActual() {
+    const getCookie = (name) => {
+        const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? decodeURIComponent(match[2]) : null;
+    };
+
+    const userId = getCookie('userId');
+    if (!userId) return;
+
+    try {
+        const response = await fetch(`/api/usuarios/${userId}/plan-expiracion`);
+        if (!response.ok) return;
+
+        const data = await response.json();
+        if (!data) return;
+
+        // Nombre del plan
+        if (data.plan) {
+            const planNombre = document.getElementById('planNombre');
+            if (planNombre) planNombre.textContent = data.plan;
+        }
+
+        // Fecha de expiración
+        if (data.fechaExpiracion) {
+            const expiracion = new Date(data.fechaExpiracion);
+            const formatted = expiracion.toLocaleDateString('es-ES');
+            const planFecha = document.getElementById('planFecha');
+            if (planFecha) planFecha.textContent = formatted;
+        }
+    } catch (err) {
+        console.warn('No se pudo cargar el plan actual:', err);
+    }
+}
+
+// Cargar el historial completo de pedidos
+async function cargarHistorialPedidos() {
+    const getCookie = (name) => {
+        const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? decodeURIComponent(match[2]) : null;
+    };
+
+    const userId = getCookie('userId');
+    if (!userId) return;
+
+    const container = document.getElementById('pedidos-container');
+    if (!container) return;
+
+    try {
+        const response = await fetch(`/api/usuarios/${userId}/historial-pedidos`);
+        if (!response.ok) {
+            container.innerHTML = '<p style="text-align: center; color: #999;">No se pudo cargar el historial de pedidos</p>';
+            return;
+        }
+
+        const pedidos = await response.json();
+        if (!pedidos || pedidos.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #999;">No tienes pedidos realizados</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+
+        pedidos.forEach(pedido => {
+            const pedidoDiv = document.createElement('div');
+            pedidoDiv.className = 'pedido';
+
+            const fecha = pedido.fecha ? new Date(pedido.fecha).toLocaleDateString('es-ES') : 'Fecha no disponible';
+
+            let pedidoHtml = `
+                <div class="pedido-header">
+                    <h4>Pedido #${pedido.id_pedido}</h4>
+                    <p class="pedido-fecha">Fecha: ${fecha}</p>
+                    <p class="pedido-total">Total: ${pedido.total}€</p>
+                    <p class="pedido-estado">Estado: ${pedido.estado}</p>
+                </div>
+                <div class="pedido-detalles">
+            `;
+
+            if (pedido.detalles && pedido.detalles.length > 0) {
+                pedido.detalles.forEach(detalle => {
+                    const imagenSrc = (detalle.imagen && detalle.imagen.startsWith('http')) ? detalle.imagen : (detalle.imagen ? `/api/productos/${detalle.id_producto}/imagen` : 'img/producto-default.png');
+                    pedidoHtml += `
+                        <div class="pedido-item">
+                            <img src="${imagenSrc}" alt="${detalle.nombre}" class="pedido-foto">
+                            <div class="item-info">
+                                <p><strong>${detalle.nombre}</strong></p>
+                                <p>Cantidad: ${detalle.cantidad}</p>
+                                <p>Precio unitario: ${detalle.precio_unitario}€</p>
+                                <p>Subtotal: ${detalle.subtotal}€</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            pedidoHtml += `
+                </div>
+            `;
+
+            pedidoDiv.innerHTML = pedidoHtml;
+            container.appendChild(pedidoDiv);
+        });
+
+    } catch (err) {
+        console.error('Error cargando historial de pedidos:', err);
+        container.innerHTML = '<p style="text-align: center; color: #999;">Error al cargar el historial de pedidos</p>';
+    }
+}
+
+// Cargar el historial completo de pedidos
+async function cargarHistorialPedidos() {
+    const getCookie = (name) => {
+        const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? decodeURIComponent(match[2]) : null;
+    };
+
+    const userId = getCookie('userId');
+    if (!userId) return;
+
+    const container = document.getElementById('pedidos-container');
+    if (!container) return;
+
+    try {
+        const response = await fetch(`/api/usuarios/${userId}/historial-pedidos`);
+        if (!response.ok) {
+            container.innerHTML = '<p style="text-align: center; color: #999;">No se pudo cargar el historial de pedidos</p>';
+            return;
+        }
+
+        const pedidos = await response.json();
+        if (!pedidos || pedidos.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #999;">No tienes pedidos realizados</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+
+        pedidos.forEach(pedido => {
+            const pedidoDiv = document.createElement('div');
+            pedidoDiv.className = 'pedido';
+
+            const fecha = pedido.fecha ? new Date(pedido.fecha).toLocaleDateString('es-ES') : 'Fecha no disponible';
+
+            let pedidoHtml = `
+                <div class="pedido-header">
+                    <h4>Pedido #${pedido.id_pedido}</h4>
+                    <p class="pedido-fecha">Fecha: ${fecha}</p>
+                    <p class="pedido-total">Total: ${pedido.total}€</p>
+                    <p class="pedido-estado">Estado: ${pedido.estado}</p>
+                </div>
+                <div class="pedido-detalles">
+            `;
+
+            if (pedido.detalles && pedido.detalles.length > 0) {
+                pedido.detalles.forEach(detalle => {
+                    const imagenSrc = (detalle.imagen && detalle.imagen.startsWith('http')) ? detalle.imagen : (detalle.imagen ? `/api/productos/${detalle.id_producto}/imagen` : 'img/producto-default.png');
+                    pedidoHtml += `
+                        <div class="pedido-item">
+                            <img src="${imagenSrc}" alt="${detalle.nombre}" class="pedido-foto">
+                            <div class="item-info">
+                                <p><strong>${detalle.nombre}</strong></p>
+                                <p>Cantidad: ${detalle.cantidad}</p>
+                                <p>Precio unitario: ${detalle.precio_unitario}€</p>
+                                <p>Subtotal: ${detalle.subtotal}€</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            pedidoHtml += `
+                </div>
+            `;
+
+            pedidoDiv.innerHTML = pedidoHtml;
+            container.appendChild(pedidoDiv);
+        });
+
+    } catch (err) {
+        console.error('Error cargando historial de pedidos:', err);
+        container.innerHTML = '<p style="text-align: center; color: #999;">Error al cargar el historial de pedidos</p>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    cargarPlanActual();
+    cargarHistorialPedidos();
 });
 </script>
 

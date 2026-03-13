@@ -232,6 +232,31 @@ body {
     text-transform: uppercase; 
 }
 
+.plan-tag {
+    font-weight: bold;
+    color: var(--grisC);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.p-plan {
+    font-family: 'Oswald', sans-serif;
+    font-size: 22px;
+    color: var(--azulC);
+    text-transform: uppercase;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.p-plan-expiration {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    color: var(--azulC);
+    margin: 5px 0;
+    letter-spacing: 0.5px;
+}
+
 .btn-swap {
     color: var(--blanco);
     text-decoration: none;
@@ -289,28 +314,42 @@ body {
     background: rgba(255, 255, 255, 0.02);
     border-radius: 6px;
     margin-bottom: 12px;
+    gap: 15px;
 }
 
-.product-row img { width: 55px; height: 55px; object-fit: contain; }
+.product-row img { 
+    width: 70px; 
+    height: 70px; 
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
 
 .p-name {
     flex-grow: 1;
     font-size: 16px;
-    margin-left: 20px;
+    color: var(--blanco);
+    font-weight: 500;
+}
+
+.p-qty {
+    color: var(--grisC);
+    font-size: 14px;
 }
 
 .p-values-right {
     display: flex;
-    gap: 50px;
+    gap: 30px;
     align-items: center;
 }
 
 .p-price {
     font-family: 'Oswald', sans-serif;
     font-size: 18px;
-    color: var(--blanco);
+    color: var(--azulC);
     min-width: 80px;
     text-align: right;
+    font-weight: bold;
 }
 
 /* --- RESPONSIVO --- */
@@ -342,7 +381,120 @@ body {
     .sidebar-card { position: static; max-width: 500px; margin: 0 auto; }
 }
 
-/* --- FOOTER (Restaurado Hovers) --- */
+/* --- HISTORIAL DE PEDIDOS --- */
+.orders-history {
+    margin-top: 50px;
+}
+
+.orders-history h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    color: var(--azulC);
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--azulC);
+    padding-bottom: 10px;
+}
+
+.pedido {
+    background-color: var(--grisO);
+    border: 1px solid var(--azul);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+}
+
+.pedido:hover {
+    border-color: var(--azulC);
+    box-shadow: 0 0 20px rgba(58, 111, 242, 0.2);
+    background-color: #222;
+}
+
+.pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pedido-header h4 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 20px;
+    color: var(--azulC);
+    margin: 0;
+}
+
+.pedido-fecha {
+    color: var(--grisC);
+    font-size: 14px;
+}
+
+.pedido-total {
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    color: var(--azulC);
+    font-weight: bold;
+}
+
+.pedido-estado {
+    color: var(--grisC);
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.pedido-detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pedido-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    gap: 20px;
+    transition: background 0.3s ease;
+}
+
+.pedido-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.pedido-foto {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--azulC);
+    flex-shrink: 0;
+}
+
+.item-info {
+    flex-grow: 1;
+}
+
+.item-info p {
+    margin: 5px 0;
+    color: var(--blanco);
+}
+
+.item-info p:first-child {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--azulC);
+}
+
+.item-info p:not(:first-child) {
+    color: var(--grisC);
+    font-size: 14px;
+}
 .footer {
     background-color: var(--negro);
     padding: 60px 20px 20px 20px;
