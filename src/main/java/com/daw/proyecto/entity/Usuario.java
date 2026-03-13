@@ -37,6 +37,12 @@ public class Usuario {
     @Column(name = "fecha_alta", nullable = false)
     private Date fecha_alta;
 
+    @Column(name = "fecha_expiracion_plan")
+    private Date fechaExpiracionPlan;
+
+    @Column(name = "plan", length = 100)
+    private String plan;
+
     // --- CAMBIO PRINCIPAL AQUÍ ---
     @Convert(converter = RolConverter.class)
     @Column(length = 20)
@@ -112,6 +118,22 @@ public class Usuario {
 
     public void setFecha_alta(Date fecha_alta) {
         this.fecha_alta = fecha_alta;
+    }
+
+    public Date getFechaExpiracionPlan() {
+        return fechaExpiracionPlan;
+    }
+
+    public void setFechaExpiracionPlan(Date fechaExpiracionPlan) {
+        this.fechaExpiracionPlan = fechaExpiracionPlan;
+    }
+
+    public String getPlan() {
+        return plan;
+    }
+
+    public void setPlan(String plan) {
+        this.plan = plan;
     }
 
     public Rol getRol() {

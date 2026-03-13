@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface ProductosRepository extends JpaRepository<Productos, Integer> {
     
+    // Buscar por nombre exacto
+    java.util.Optional<Productos> findByNombre(String nombre);
+    
     // Buscar por nombre (LIKE - búsqueda parcial)
     List<Productos> findByNombreContainingIgnoreCase(String nombre);
     

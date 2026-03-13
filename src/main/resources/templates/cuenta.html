@@ -33,6 +33,11 @@
                     <label>Teléfono</label>
                     <p id="user-telefono">No registrado</p>
                 </div>
+                <div class="data-group" style="margin-top: 20px; text-align: center;">
+                    <button id="btn-logout" class="btn-swap" style="background: #dc3545; color: white;">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    </button>
+                </div>
             </div>
         </div>
     </aside>
@@ -43,7 +48,9 @@
         <div class="plan-info-box">
             <div class="plan-text">
                 <span class="plan-tag">Plan actual:</span>
-                <span class="plan-highlight">Premium Vip</span>
+                <span class="plan-highlight">Cargando...</span>
+                <span class="plan-tag" style="margin-left: 15px; display: none;" id="plan-expiration-label">Expira el:</span>
+                <span class="plan-expiration" id="plan-expiration-date" style="display: none; font-weight: bold; color: var(--blanco);"></span>
             </div>
             <a th:href="@{/gimnasio}" class="btn-swap">Cambiar plan</a>
         </div>

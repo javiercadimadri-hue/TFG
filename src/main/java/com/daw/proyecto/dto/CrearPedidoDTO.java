@@ -53,14 +53,16 @@ public class CrearPedidoDTO {
         private String nombre;
         private Double precio;
         private Integer cantidad;
+        private Boolean esPlan;
         
         public ItemCarritoDTO() {}
         
-        public ItemCarritoDTO(Integer id, String nombre, Double precio, Integer cantidad) {
+        public ItemCarritoDTO(Integer id, String nombre, Double precio, Integer cantidad, Boolean esPlan) {
             this.id = id;
             this.nombre = nombre;
             this.precio = precio;
             this.cantidad = cantidad;
+            this.esPlan = esPlan;
         }
         
         public Integer getId() {
@@ -93,6 +95,14 @@ public class CrearPedidoDTO {
         
         public void setCantidad(Integer cantidad) {
             this.cantidad = cantidad;
+        }
+        
+        public Boolean getEsPlan() {
+            return esPlan;
+        }
+        
+        public void setEsPlan(Boolean esPlan) {
+            this.esPlan = esPlan;
         }
     }
 }

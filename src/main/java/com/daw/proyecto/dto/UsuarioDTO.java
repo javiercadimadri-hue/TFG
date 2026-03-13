@@ -10,9 +10,10 @@ public class UsuarioDTO {
     private String contraseña;
     private String teléfono;
     private Date fecha_alta;
-    // Cambiado a String para evitar errores de binding desde formularios
     private String rol;
     private String foto;
+    private String plan;
+    private Date fechaExpiracionPlan;
 
     // Constructor vacío
     public UsuarioDTO() {
@@ -103,5 +104,21 @@ public class UsuarioDTO {
 
     public void setFoto(String foto) {
         this.foto = foto;
+    }
+
+    public String getPlan() {
+        return plan;
+    }
+
+    public void setPlan(String plan) {
+        this.plan = plan;
+    }
+
+    public Date getFechaExpiracionPlan() {
+        return fechaExpiracionPlan;
+    }
+
+    public void setFechaExpiracionPlan(Date fechaExpiracionPlan) {
+        this.fechaExpiracionPlan = fechaExpiracionPlan;
     }
 }

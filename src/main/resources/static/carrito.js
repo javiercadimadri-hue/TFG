@@ -81,10 +81,12 @@ function guardarCarrito(carrito) {
  * @param {string} nombre - Nombre del producto
  * @param {number} precio - Precio del producto
  * @param {number} cantidad - Cantidad a agregar (default: 1)
+ * @param {string} imagen - Imagen del producto
+ * @param {boolean} esPlan - Indica si es un plan de gimnasio
  */
-function agregarAlCarrito(id, nombre, precio, cantidad = 1) {
+function agregarAlCarrito(id, nombre, precio, cantidad = 1, imagen = 'img/producto-default.png', esPlan = false) {
     console.log('\n=== FUNCIÓN: agregarAlCarrito() ===');
-    console.log('Parámetros:', {id, nombre, precio, cantidad});
+    console.log('Parámetros:', {id, nombre, precio, cantidad, imagen, esPlan});
     
     // Obtener usuario del localStorage
     const usuarioStr = localStorage.getItem('usuario');
@@ -118,13 +120,32 @@ function agregarAlCarrito(id, nombre, precio, cantidad = 1) {
     const carrito = obtenerCarrito();
     console.log('Carrito antes:', JSON.stringify(carrito));
     
+    // Validar si es un plan y si ya hay un plan en el carrito
+    if (esPlan) {
+        const planExistente = carrito.items.find(item => item.esPlan === true);
+        if (planExistente) {
+            mostrarAlertaCarrito('¡Solo puedes tener un plan activo en el carrito a la vez!', 'warning');
+            return;
+        }
+    }
+    
     // Buscar si el producto ya existe en el carrito
     const itemExistente = carrito.items.find(item => item.id === id);
     
     if (itemExistente) {
+        // En caso de planes, no deberían sumarse cantidades (1 máximo)
+        if (itemExistente.esPlan) {
+            mostrarAlertaCarrito('Este plan ya está en tu carrito.', 'warning');
+            return;
+        }
+        
         // Si existe, aumentar la cantidad
         console.log(`Producto ya existe. Aumentando cantidad de ${itemExistente.cantidad} a ${itemExistente.cantidad + cantidad}`);
         itemExistente.cantidad += cantidad;
+        // Update image if a new one is provided that isn't default
+        if (imagen && imagen !== 'img/producto-default.png') {
+            itemExistente.imagen = imagen;
+        }
     } else {
         // Si no existe, agregar nuevo
         console.log('Agregando producto nuevo al carrito');
@@ -132,7 +153,9 @@ function agregarAlCarrito(id, nombre, precio, cantidad = 1) {
             id: id,
             nombre: nombre,
             precio: precio,
-            cantidad: cantidad
+            cantidad: cantidad,
+            imagen: imagen,
+            esPlan: esPlan
         });
     }
     
@@ -245,9 +268,9 @@ function mostrarAlertaCarrito(mensaje, tipo = 'info') {
 function actualizarVistaCarrito() {
     actualizarContadorCarrito();
     
-    // Si existe la tabla del carrito, actualizarla
-    const tablaCarrito = document.getElementById('tablaCarrito');
-    if (tablaCarrito) {
+    // Si existe el contenedor del carrito, actualizarlo
+    const cartContainer = document.getElementById('cart-items-container');
+    if (cartContainer) {
         renderizarCarrito();
     }
 }
@@ -257,100 +280,94 @@ function actualizarVistaCarrito() {
  */
 function renderizarCarrito() {
     const carrito = obtenerCarrito();
-    const tbodyCarrito = document.getElementById('tbodyCarrito');
-    const totalSpan = document.getElementById('totalCarrito');
-    const seccionTotal = document.getElementById('seccionTotal');
-    const carritoVacio = document.getElementById('carritoVacio');
-    const tablaCarrito = document.getElementById('tablaCarrito');
+    const cartItemsContainer = document.getElementById('cart-items-container');
+    const precioTotal = document.getElementById('precio-total');
+    const checkoutDetailsContainer = document.getElementById('checkout-details-container');
+    const cartSection = document.querySelector('.cart-section');
     
-    if (!tbodyCarrito || !totalSpan) {
-        console.warn('renderizarCarrito: No se encontraron elementos de la tabla');
+    // Si no estamos en la página del carrito, no hacemos nada
+    if (!cartItemsContainer || !precioTotal || !checkoutDetailsContainer) {
         return;
     }
     
     console.log('renderizarCarrito: Items en carrito:', carrito.items.length);
     
-    // Limpiar tabla completamente
-    tbodyCarrito.innerHTML = '';
+    // Limpiar contenedor (manteniendo el título h1)
+    const titleHtml = '<h1 class="cart-title">Tu cesta...</h1>';
     
     if (carrito.items.length === 0) {
-        console.log('renderizarCarrito: Carrito vacío, ocultando tabla');
+        // Carrito vacío
+        cartItemsContainer.innerHTML = titleHtml + '<p class="text-center mt-4">Tu carrito está vacío.</p>';
+        precioTotal.textContent = '0.00€';
         
-        // Mostrar mensaje de carrito vacío
-        if (carritoVacio) {
-            carritoVacio.style.display = 'block';
-        }
-        
-        // Ocultar tabla y totales
-        if (tablaCarrito) {
-            tablaCarrito.style.display = 'none';
-        }
-        if (tbodyCarrito.parentElement) {
-            tbodyCarrito.parentElement.parentElement.style.display = 'none';
-        }
-        if (seccionTotal) {
-            seccionTotal.style.display = 'none';
-        }
-        
-        // Limpiar el total
-        totalSpan.textContent = 'Total: 0.00 €';
-        
+        // Limpiar resumen de pedido
+        checkoutDetailsContainer.innerHTML = `
+            <div class="detail-row">
+                <span>Envío</span>
+                <span class="free-shipping">GRATIS</span>
+            </div>
+            <div class="detail-row total">
+                <span>Total</span>
+                <span id="precio-total">0.00€</span>
+            </div>
+        `;
         return;
     }
     
-    console.log('renderizarCarrito: Mostrando', carrito.items.length, 'productos');
+    // Renderizar productos
+    let itemsHtml = titleHtml;
+    let resumenHtml = '';
     
-    // Ocultar mensaje de carrito vacío
-    if (carritoVacio) {
-        carritoVacio.style.display = 'none';
-    }
-    
-    // Mostrar tabla y totales
-    if (tablaCarrito) {
-        tablaCarrito.style.display = 'block';
-    }
-    if (tbodyCarrito.parentElement) {
-        tbodyCarrito.parentElement.parentElement.style.display = 'table';
-    }
-    if (seccionTotal) {
-        seccionTotal.style.display = 'block';
-    }
-    
-    // Renderizar cada producto
     carrito.items.forEach(item => {
-        const fila = document.createElement('tr');
         const subtotal = (item.precio * item.cantidad).toFixed(2);
+        const imagenUrl = item.imagen || `img/producto-default.png`; // Fallback imagen
         
-        fila.innerHTML = `
-            <td>
-                <strong>${item.nombre}</strong>
-            </td>
-            <td class="text-center">
-                ${item.precio.toFixed(2)} €
-            </td>
-            <td class="text-center">
-                <input type="number" class="form-control" style="width: 80px; margin: 0 auto;" 
-                       value="${item.cantidad}" min="1" 
-                       onchange="actualizarCantidad(${item.id}, this.value)">
-            </td>
-            <td class="text-center">
-                <strong>${subtotal} €</strong>
-            </td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${item.id})">
-                    <i class="bi bi-trash"></i> Eliminar
-                </button>
-            </td>
+        // Item del carrito (div.cart-item)
+        itemsHtml += `
+            <div class="cart-item">
+                <img src="${imagenUrl}" alt="${item.nombre}" style="width: 80px; object-fit: cover;">
+                <div class="item-info">
+                    <h3>${item.nombre}</h3>
+                    <div style="display: flex; align-items: center; margin-top: 10px;">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="actualizarCantidad(${item.id}, ${item.cantidad - 1})">-</button>
+                        <span style="margin: 0 10px;">${item.cantidad}</span>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="actualizarCantidad(${item.id}, ${item.cantidad + 1})">+</button>
+                    </div>
+                </div>
+                <div class="item-price">${subtotal}€</div>
+                <button class="btn-remove" onclick="eliminarDelCarrito(${item.id})"><i class="fas fa-trash"></i></button>
+            </div>
         `;
         
-        tbodyCarrito.appendChild(fila);
+        // Fila del resumen
+        resumenHtml += `
+            <div class="detail-row product-summary">
+                <span>${item.nombre} (x${item.cantidad})</span>
+                <span>${subtotal}€</span>
+            </div>
+        `;
     });
+    
+    cartItemsContainer.innerHTML = itemsHtml;
     
     // Actualizar total
     const total = calcularTotal();
-    totalSpan.textContent = `Total: ${total.toFixed(2)} €`;
     
-    console.log('renderizarCarrito: ✓ Carrito renderizado correctamente');
+    // Agregar filas finales al resumen
+    resumenHtml += `
+        <div class="detail-row">
+            <span>Envío</span>
+            <span class="free-shipping">GRATIS</span>
+        </div>
+        <div class="detail-row total">
+            <span>Total</span>
+            <span id="precio-total">${total.toFixed(2)}€</span>
+        </div>
+    `;
+    
+    checkoutDetailsContainer.innerHTML = resumenHtml;
+    
+    console.log('renderizarCarrito: ✓ Carrito renderizado correctamente usando DIVs');
 }
 
 /**
@@ -634,7 +651,7 @@ function procesarCompra() {
     const total = calcularTotal();
     const usuarioId = usuario.id || usuario.id_usuario;
     
-    if (confirm(`¿Confirmar compra por $${total.toFixed(2)}?`)) {
+    if (confirm(`¿Confirmar compra por €${total.toFixed(2)}?`)) {
         // Preparar datos para el backend
         const crearPedidoDTO = {
             id_usuario: usuarioId,
@@ -642,7 +659,8 @@ function procesarCompra() {
                 id: item.id,
                 nombre: item.nombre,
                 precio: item.precio,
-                cantidad: item.cantidad
+                cantidad: item.cantidad,
+                esPlan: item.esPlan || false
             })),
             total: total
         };
@@ -658,14 +676,26 @@ function procesarCompra() {
             },
             body: JSON.stringify(crearPedidoDTO)
         })
-        .then(response => {
+        .then(async response => {
             if (!response.ok) {
-                throw new Error('Error al procesar la compra: ' + response.status);
+                const errorText = await response.text();
+                throw new Error(errorText || `Error ${response.status}`);
             }
             return response.json();
         })
         .then(pedido => {
             console.log('✓ Pedido creado exitosamente:', pedido);
+            
+            // Si hay un plan en el carrito, actualizar el perfil del usuario en localStorage
+            const planItem = carrito.items.find(item => item.esPlan === true);
+            if (planItem) {
+                const usuarioActualizado = JSON.parse(localStorage.getItem('usuario') || '{}');
+                usuarioActualizado.plan = planItem.nombre;
+                // Fecha de expiración: 30 días desde ahora
+                usuarioActualizado.fecha_expiracion_plan = Date.now() + (30 * 24 * 60 * 60 * 1000);
+                localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+                console.log('✓ Plan actualizado en localStorage:', planItem.nombre);
+            }
             
             // Vaciar carrito en localStorage
             const claveCarrito = obtenerClaveCarrito();
@@ -676,17 +706,13 @@ function procesarCompra() {
             
             actualizarVistaCarrito();
             
-            // Mostrar confirmación
-            mostrarAlertaCarrito(`¡Compra realizada exitosamente! Pedido #${pedido.id_pedido}`, 'success');
-            
-            // Redirigir al historial de pedidos
-            setTimeout(() => {
-                window.location.href = '/usuarios/inicio';
-            }, 2000);
+            // Mostrar confirmación y redirigir al historial de pedidos
+            alert(`¡Compra realizada exitosamente! Pedido #${pedido.id_pedido}`);
+            window.location.href = '/cuenta';
         })
         .catch(error => {
             console.error('✗ Error al procesar la compra:', error);
-            mostrarAlertaCarrito(`Error al procesar la compra: ${error.message}`, 'danger');
+            alert(`Error al procesar la compra: ${error.message}`);
         });
     }
 }

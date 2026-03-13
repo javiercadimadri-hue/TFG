@@ -82,8 +82,35 @@ public class PedidosService {
         // Crear detalles del pedido
         if (crearPedidoDTO.getItems() != null && !crearPedidoDTO.getItems().isEmpty()) {
             for (CrearPedidoDTO.ItemCarritoDTO item : crearPedidoDTO.getItems()) {
-                Productos producto = productosRepository.findById(item.getId())
-                        .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + item.getId()));
+                // Buscar producto por ID
+                Optional<Productos> productoOpt = productosRepository.findById(item.getId());
+                Productos producto = null;
+                
+                if (productoOpt.isPresent()) {
+                    producto = productoOpt.get();
+                } else if (item.getEsPlan() != null && item.getEsPlan()) {
+                    // Si es un plan y no se encontró por ID, intentar por nombre
+                    System.out.println(">>> Plan no encontrado por ID (" + item.getId() + "), buscando por nombre: " + item.getNombre());
+                    producto = productosRepository.findByNombre(item.getNombre()).orElse(null);
+                    
+                    // Si sigue sin existir, lo creamos al vuelo (Auto-fix de base de datos)
+                    if (producto == null) {
+                        System.out.println(" >>> Creando producto de plan faltante: " + item.getNombre());
+                        producto = new Productos();
+                        // Importante: No seteamos ID para que lo genere la DB si es auto-incremental, 
+                        // pero si es manual hay que tener cuidado. La entidad usa IDENTITY.
+                        producto.setNombre(item.getNombre());
+                        producto.setDescripcion("Plan de gimnasio: " + item.getNombre());
+                        producto.setPrecio(new BigDecimal(item.getPrecio()));
+                        producto.setStock(999);
+                        producto.setCategoria("Plan");
+                        producto = productosRepository.save(producto);
+                    }
+                }
+                
+                if (producto == null) {
+                    throw new RuntimeException("Producto no encontrado: " + item.getId());
+                }
                 
                 Detalle_pedidos detalle = new Detalle_pedidos();
                 detalle.setPedido(pedidoGuardado);
@@ -92,6 +119,14 @@ public class PedidosService {
                 detalle.setPrecio_unitario(new BigDecimal(item.getPrecio()));
                 
                 pedidoGuardado.getDetalles().add(detalle);
+                
+                // Si el item es un plan, actualizar el plan del usuario
+                if (item.getEsPlan() != null && item.getEsPlan()) {
+                    usuario.setPlan(item.getNombre());
+                    // Sumar 30 días (1 mes aproximado)
+                    usuario.setFechaExpiracionPlan(new java.util.Date(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000));
+                    usuarioRepository.save(usuario);
+                }
             }
         }
         

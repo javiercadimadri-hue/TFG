@@ -10,89 +10,10 @@
         <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
 </head>
 <body>
-    <!-- HEADER SIN SESIÓN -->
-    <header class="header" id="header-login">
-        <div class="logo">
-            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
-        </div>
-        <h1 class="title">IronFit</h1>
-    <nav class="nav-links">
-        <a th:href="@{/gimnasio}">Gimnasio</a>
-        <a th:href="@{/tienda}">Tienda</a>
-        <a th:href="@{/profesionales}">Profesionales</a>
-    </nav>
-        <div class="account-links">
-            <a th:href="@{/login}">Iniciar Sesión</a>
-            <a th:href="@{/registro}">Inscribirse</a>
-        </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
-            <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
-    </header>
+    <!-- HEADER UNIFICADO -->
+    <div th:replace="fragments/header :: header"></div>
 
-    <!-- HEADER CON SESIÓN -->
-    <header class="header" id="header-cuenta" style="display: none;">
-        <div class="logo">
-            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
-        </div>
-        <h1 class="title">
-            <a th:href="@{/}" class="title-link" style="color: inherit; text-decoration: none;">IronFit</a>
-        </h1>
-        <nav class="nav-links">
-            <a th:href="@{/gimnasio}">Gimnasio</a>
-            <a th:href="@{/tienda}">Tienda</a>
-            <a th:href="@{/profesionales}">Profesionales</a>
-        </nav>
-        <div class="account-links">
-            <a th:href="@{/admin}" class="admin-link">
-                <i class="fas fa-user-shield"></i>
-                <span>Admin</span>
-            </a>
-            <a th:href="@{/carrito}" class="cart-icon-link">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
-            <a th:href="@{/cuenta}" class="account-profile-link">
-                <span class="user-name">MI CUENTA</span>
-            </a>
-        </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
-            <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
-    </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('authToken');
-            const headerLogin = document.getElementById('header-login');
-            const headerCuenta = document.getElementById('header-cuenta');
-            
-            if (token) {
-                headerLogin.style.display = 'none';
-                headerCuenta.style.display = 'flex';
-                
-                const usuarioJSON = localStorage.getItem('usuario');
-                if (usuarioJSON) {
-                    const usuario = JSON.parse(usuarioJSON);
-                    const avatarImg = headerCuenta.querySelector('.user-avatar');
-                    const userNameSpan = headerCuenta.querySelector('.user-name');
-                    
-                    if (usuario.foto && usuario.foto !== 'null') {
-                        if (avatarImg) avatarImg.src = '/img/' + usuario.foto;
-                    }
-                    if (usuario.nombre && userNameSpan) {
-                        userNameSpan.textContent = usuario.nombre;
-                    }
-                }
-            } else {
-                headerLogin.style.display = 'flex';
-                headerCuenta.style.display = 'none';
-            }
-        });
-    </script>
 
 <section class="gym-grid-section">
     <div class="gym-container">
@@ -101,7 +22,7 @@
                 <h3 class="plan-name">Plan Basic</h3>
                 <p class="plan-description">Acceso completo a sala de musculación y cardio en horario de mañana (7:00 a 14:00).</p>
                 <span class="plan-price">19,99€</span>
-                <button class="add-to-cart">Añadir al carrito</button>
+                <button class="add-to-cart" onclick="manejarCompra(101, 'Plan Basic', 19.99, 'img/planBasic.webp', true)">Añadir al carrito</button>
             </div>
         </div>
 
@@ -110,7 +31,7 @@
                 <h3 class="plan-name">Fitness Total</h3>
                 <p class="plan-description">Entrena sin límites a cualquier hora. Acceso total a maquinaria de última generación.</p>
                 <span class="plan-price">29,99€</span>
-                <button class="add-to-cart">Añadir al carrito</button>
+                <button class="add-to-cart" onclick="manejarCompra(102, 'Fitness Total', 29.99, 'img/planTotal.jpg', true)">Añadir al carrito</button>
             </div>
         </div>
 
@@ -119,7 +40,7 @@
                 <h3 class="plan-name">Iron Performance</h3>
                 <p class="plan-description">Para atletas: incluye acceso a clases dirigidas de Crossfit y zona de Boxeo.</p>
                 <span class="plan-price">44,90€</span>
-                <button class="add-to-cart">Añadir al carrito</button>
+                <button class="add-to-cart" onclick="manejarCompra(103, 'Iron Performance', 44.90, 'img/planPerformance.jpg', true)">Añadir al carrito</button>
             </div>
         </div>
 
@@ -128,7 +49,7 @@
                 <h3 class="plan-name">Wellness & Relax</h3>
                 <p class="plan-description">Enfocado en tu bienestar: Yoga, Pilates, acceso a piscina y zona de sauna.</p>
                 <span class="plan-price">35,00€</span>
-                <button class="add-to-cart">Añadir al carrito</button>
+                <button class="add-to-cart" onclick="manejarCompra(104, 'Wellness & Relax', 35.00, 'img/yoga.jpg', true)">Añadir al carrito</button>
             </div>
         </div>
 
@@ -137,7 +58,7 @@
                 <h3 class="plan-name">Premium VIP</h3>
                 <p class="plan-description">Entrenador personal, plan nutricional a medida y todas las clases incluidas.</p>
                 <span class="plan-price">89,99€</span>
-                <button class="add-to-cart">Añadir al carrito</button>
+                <button class="add-to-cart" onclick="manejarCompra(105, 'Premium VIP', 89.99, 'img/planVip.jpg', true)">Añadir al carrito</button>
             </div>
         </div>
 
@@ -146,7 +67,7 @@
                 <h3 class="plan-name">Plan Dúo</h3>
                 <p class="plan-description">Entrenar acompañado es mejor. Cuota compartida para dos personas sin restricciones.</p>
                 <span class="plan-price">49,90€</span>
-                <button class="add-to-cart">Añadir al carrito</button>
+                <button class="add-to-cart" onclick="manejarCompra(106, 'Plan Dúo', 49.90, 'img/planDuo.jpg', true)">Añadir al carrito</button>
             </div>
         </div>
     </div>
@@ -196,5 +117,8 @@
         </div>
     </footer>
 
+    <!-- Scripts para el carrito -->
+    <script th:src="@{/carrito.js}"></script>
+    <script th:src="@{/planes.js}"></script>
 </body>
 </html>

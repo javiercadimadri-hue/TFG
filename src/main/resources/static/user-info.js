@@ -15,6 +15,19 @@ function actualizarInformacionUsuario() {
             return;
         }
         
+        // Configurar botón de logout
+        const btnLogout = document.getElementById('btn-logout');
+        if (btnLogout) {
+            btnLogout.addEventListener('click', function() {
+                if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('usuario');
+                    localStorage.removeItem('jwt_token');
+                    window.location.href = '/login';
+                }
+            });
+        }
+        
         // Obtener datos del usuario del localStorage
         const usuarioJSON = localStorage.getItem('usuario');
         
@@ -133,8 +146,23 @@ function actualizarInformacionPersonal(usuario) {
     
     // Actualizar plan si está disponible
     const planElement = document.querySelector('.plan-highlight');
-    if (planElement && usuario.plan) {
-        planElement.innerText = usuario.plan;
+    if (planElement) {
+        planElement.innerText = usuario.plan || 'Ninguno';
+    }
+    
+    // Actualizar fecha de expiración si está disponible
+    const expirationElement = document.getElementById('plan-expiration-date');
+    const expirationLabel = document.getElementById('plan-expiration-label');
+    if (expirationElement && expirationLabel) {
+        if (usuario.fechaExpiracionPlan) {
+            const date = new Date(usuario.fechaExpiracionPlan);
+            expirationElement.innerText = date.toLocaleDateString('es-ES');
+            expirationElement.style.display = 'inline-block';
+            expirationLabel.style.display = 'inline-block';
+        } else {
+            expirationElement.style.display = 'none';
+            expirationLabel.style.display = 'none';
+        }
     }
 }
 
@@ -185,7 +213,8 @@ function mostrarHistorialPedidos(pedidos) {
     contenido += '</tr></thead><tbody>';
     
     pedidos.forEach(pedido => {
-        const fecha = new Date(pedido.fecha_pedido).toLocaleDateString('es-ES');
+        const fechaVal = pedido.fecha || pedido.fecha_pedido; // Soporte para ambos por si acaso
+        const fecha = fechaVal ? new Date(fechaVal).toLocaleDateString('es-ES') : 'N/A';
         contenido += `<tr style="border-bottom: 1px solid #eee;">`;
         contenido += `<td style="padding: 10px;">#${pedido.id_pedido}</td>`;
         contenido += `<td style="padding: 10px;">${fecha}</td>`;

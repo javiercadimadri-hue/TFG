@@ -5,9 +5,9 @@
 /**
  * Maneja la compra verificando si el usuario está autenticado
  */
-function manejarCompra(id, nombre, precio) {
+function manejarCompra(id, nombre, precio, imagen, esPlan) {
     console.log('=== manejarCompra() llamado ===');
-    console.log('ID:', id, 'Nombre:', nombre, 'Precio:', precio);
+    console.log('ID:', id, 'Nombre:', nombre, 'Precio:', precio, 'esPlan:', esPlan);
     
     // Debug: Verificar localStorage
     const usuarioStr = localStorage.getItem('usuario');
@@ -32,11 +32,11 @@ function manejarCompra(id, nombre, precio) {
         return;
     }
     
-    console.log('Usuario autenticado. ID:', usuario.id);
+    console.log('Usuario autenticado. ID:', usuario.id_usuario);
     console.log('Llamando a agregarAlCarrito()');
     
     // Usuario autenticado - agregar al carrito
-    agregarAlCarrito(id, nombre, precio);
+    agregarAlCarrito(id, nombre, precio, 1, imagen || 'img/producto-default.png', esPlan);
 }
 
 // Actualizar contador del carrito al cargar la página

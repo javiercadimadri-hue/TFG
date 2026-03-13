@@ -87,6 +87,10 @@ public class UsuarioController {
                 usuarioDTO.setRol("USER_ROLE");
             }
 
+            // Asegurar que no tiene plan por defecto
+            usuarioDTO.setPlan(null);
+            usuarioDTO.setFechaExpiracionPlan(null);
+
             // Guardar el usuario en la base de datos
             UsuarioDTO usuarioGuardado = usuarioService.save(usuarioDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(usuarioGuardado);
@@ -128,6 +132,10 @@ public class UsuarioController {
             if (usuarioDTO.getFoto() == null || usuarioDTO.getFoto().isEmpty()) {
                 usuarioDTO.setFoto("default-profile.jpg");
             }
+
+            // Asegurar que no tiene plan por defecto
+            usuarioDTO.setPlan(null);
+            usuarioDTO.setFechaExpiracionPlan(null);
 
             // Guardar el usuario en la base de datos
             UsuarioDTO usuarioGuardado = usuarioService.save(usuarioDTO);
@@ -182,6 +190,10 @@ public class UsuarioController {
                     usuarioResponse.put("teléfono", usuario.getTeléfono());
                     usuarioResponse.put("rol", usuario.getRol());
                     usuarioResponse.put("foto", usuario.getFoto());
+                    usuarioResponse.put("plan", usuario.getPlan());
+                    if (usuario.getFechaExpiracionPlan() != null) {
+                        usuarioResponse.put("fecha_expiracion_plan", usuario.getFechaExpiracionPlan().getTime());
+                    }
                     
                     response.put("success", true);
                     response.put("mensaje", "Login exitoso");

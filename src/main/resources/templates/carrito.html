@@ -1,70 +1,38 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" type="text/css" href="css/carrito.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/carrito.css}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="fontawesome-free-7.1.0-web/css/all.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/fontawesome-free-7.1.0-web/css/all.css}" type="text/css">
     <title>IronFit - Carrito</title>
-    <link rel="icon" type="image/png" href="img/logo-recortado.PNG">
+    <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
 </head>
 <body>
     <div th:replace="fragments/header :: header"></div>
 
-    <div class="social-icons">
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-tiktok"></i></a>
-        <a href="#"><i class="fab fa-x-twitter"></i></a>
-    </div>
-</header>
-
     <section class="cart-section">
         <div class="cart-container">
-            <div class="cart-items">
+            <div class="cart-items" id="cart-items-container">
                 <h1 class="cart-title">Tu cesta...</h1>
                 
-                <div class="cart-item">
-                    <img src="img/proteinaChoco.png" alt="Proteína">
-                    <div class="item-info">
-                        <h3>Proteína Whey 2kg</h3>
-                        <p>Sabor: Chocolate</p>
-                    </div>
-                    <div class="item-price">59.99€</div>
-                    <button class="btn-remove"><i class="fas fa-trash"></i></button>
-                </div>
-
-                <div class="cart-item">
-                    <img src="img/barritaEner.png" alt="Barrita">
-                    <div class="item-info">
-                        <h3>Barrita Energética</h3>
-                        <p>Pack de 10 unidades: Brownie</p>
-                    </div>
-                    <div class="item-price">18.00€</div>
-                    <button class="btn-remove"><i class="fas fa-trash"></i></button>
-                </div>
+                <!-- Los productos dinámicos se inyectarán aquí mediante JS -->
             </div>
+
 
             <div class="cart-checkout">
                 <h3>Resumen del pedido</h3>
-                <div class="checkout-details">
-                    <div class="detail-row product-summary">
-                        <span>Proteína Whey 2kg</span>
-                        <span>59.99€</span>
-                    </div>
-                    <div class="detail-row product-summary">
-                        <span>Barrita proteinas</span>
-                        <span>18.00€</span>
-                    </div>
+                <div class="checkout-details" id="checkout-details-container">
                     <div class="detail-row">
                         <span>Envío</span>
                         <span class="free-shipping">GRATIS</span>
                     </div>
                     <div class="detail-row total">
                         <span>Total</span>
-                        <span>77.99€</span>
+                        <span id="precio-total">0.00€</span>
                     </div>
                 </div>
-                <button class="btn-pay">
+                <button class="btn-pay" onclick="procesarCompra()">
                     Tramitar pedido <i class="fas fa-credit-card"></i>
                 </button>
             </div>
@@ -112,5 +80,12 @@
     </footer>
 
 <script th:src="@{/user-info.js}"></script>
+<script th:src="@{/carrito.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Renderizar el carrito al cargar la página
+        actualizarVistaCarrito();
+    });
+</script>
 </body>
 </html>

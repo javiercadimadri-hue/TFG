@@ -10,59 +10,8 @@
     <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
 </head>
 <body>
-    <!-- HEADER SIN SESIÓN -->
-    <header class="header" id="header-login">
-        <div class="logo">
-            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
-        </div>
-        <h1 class="title">IronFit</h1>
-    <nav class="nav-links">
-        <a th:href="@{/gimnasio}">Gimnasio</a>
-        <a th:href="@{/tienda}">Tienda</a>
-        <a th:href="@{/profesionales}">Profesionales</a>
-    </nav>
-        <div class="account-links">
-            <a th:href="@{/login}">Iniciar Sesión</a>
-            <a th:href="@{/registro}">Inscribirse</a>
-        </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
-            <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
-    </header>
-
-    <!-- HEADER CON SESIÓN -->
-    <header class="header" id="header-cuenta" style="display: none;">
-        <div class="logo">
-            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
-        </div>
-        <h1 class="title">
-            <a th:href="@{/}" class="title-link" style="color: inherit; text-decoration: none;">IronFit</a>
-        </h1>
-        <nav class="nav-links">
-            <a th:href="@{/gimnasio}">Gimnasio</a>
-            <a th:href="@{/tienda}">Tienda</a>
-            <a th:href="@{/profesionales}">Profesionales</a>
-        </nav>
-        <div class="account-links">
-            <a th:href="@{/admin}" class="admin-link">
-                <i class="fas fa-user-shield"></i>
-                <span>Admin</span>
-            </a>
-            <a th:href="@{/carrito}" class="cart-icon-link">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
-            <a th:href="@{/cuenta}" class="account-profile-link">
-                <span class="user-name">MI CUENTA</span>
-            </a>
-        </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
-            <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
-    </header>
+    <!-- HEADER UNIFICADO -->
+    <div th:replace="fragments/header :: header"></div>
 
     <section class="slider-container">
         <div class="slider" id="slider">
@@ -218,39 +167,7 @@
         });
     </script>
 
-    <!-- Script para cambiar header según sesión -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('authToken');
-            const headerLogin = document.getElementById('header-login');
-            const headerCuenta = document.getElementById('header-cuenta');
-            
-            if (token) {
-                // Usuario tiene sesión iniciada
-                headerLogin.style.display = 'none';
-                headerCuenta.style.display = 'flex';
-                
-                // Actualizar foto y nombre del usuario
-                const usuarioJSON = localStorage.getItem('usuario');
-                if (usuarioJSON) {
-                    const usuario = JSON.parse(usuarioJSON);
-                    const avatarImg = headerCuenta.querySelector('.user-avatar');
-                    const userNameSpan = headerCuenta.querySelector('.user-name');
-                    
-                    if (usuario.foto && usuario.foto !== 'null') {
-                        avatarImg.src = '/img/' + usuario.foto;
-                    }
-                    if (usuario.nombre) {
-                        userNameSpan.textContent = usuario.nombre;
-                    }
-                }
-            } else {
-                // No hay sesión
-                headerLogin.style.display = 'flex';
-                headerCuenta.style.display = 'none';
-            }
-        });
-    </script>
+
 
 </body>
 </html>

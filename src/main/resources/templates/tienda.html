@@ -10,89 +10,10 @@
         <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
 </head>
 <body>
-    <!-- HEADER SIN SESIÓN -->
-    <header class="header" id="header-login">
-        <div class="logo">
-            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
-        </div>
-        <h1 class="title">IronFit</h1>
-    <nav class="nav-links">
-        <a th:href="@{/gimnasio}">Gimnasio</a>
-        <a th:href="@{/tienda}">Tienda</a>
-        <a th:href="@{/profesionales}">Profesionales</a>
-    </nav>
-        <div class="account-links">
-            <a th:href="@{/login}">Iniciar Sesión</a>
-            <a th:href="@{/registro}">Inscribirse</a>
-        </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
-            <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
-    </header>
+    <!-- HEADER UNIFICADO -->
+    <div th:replace="fragments/header :: header"></div>
 
-    <!-- HEADER CON SESIÓN -->
-    <header class="header" id="header-cuenta" style="display: none;">
-        <div class="logo">
-            <img th:src="@{/img/logo-recortado.PNG}" alt="Logo">
-        </div>
-        <h1 class="title">
-            <a th:href="@{/}" class="title-link" style="color: inherit; text-decoration: none;">IronFit</a>
-        </h1>
-        <nav class="nav-links">
-            <a th:href="@{/gimnasio}">Gimnasio</a>
-            <a th:href="@{/tienda}">Tienda</a>
-            <a th:href="@{/profesionales}">Profesionales</a>
-        </nav>
-        <div class="account-links">
-            <a th:href="@{/admin}" class="admin-link">
-                <i class="fas fa-user-shield"></i>
-                <span>Admin</span>
-            </a>
-            <a th:href="@{/carrito}" class="cart-icon-link">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
-            <a th:href="@{/cuenta}" class="account-profile-link">
-                <span class="user-name">MI CUENTA</span>
-            </a>
-        </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
-            <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
-    </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('authToken');
-            const headerLogin = document.getElementById('header-login');
-            const headerCuenta = document.getElementById('header-cuenta');
-            
-            if (token) {
-                headerLogin.style.display = 'none';
-                headerCuenta.style.display = 'flex';
-                
-                const usuarioJSON = localStorage.getItem('usuario');
-                if (usuarioJSON) {
-                    const usuario = JSON.parse(usuarioJSON);
-                    const avatarImg = headerCuenta.querySelector('.user-avatar');
-                    const userNameSpan = headerCuenta.querySelector('.user-name');
-                    
-                    if (usuario.foto && usuario.foto !== 'null') {
-                        if (avatarImg) avatarImg.src = '/img/' + usuario.foto;
-                    }
-                    if (usuario.nombre && userNameSpan) {
-                        userNameSpan.textContent = usuario.nombre;
-                    }
-                }
-            } else {
-                headerLogin.style.display = 'flex';
-                headerCuenta.style.display = 'none';
-            }
-        });
-    </script>
 
     <!-- Productos desde la base de datos -->
     <section class="container-main">
@@ -133,7 +54,7 @@
             list.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'producto-card';
-                const imgSrc = p.imagen ? `/api/productos/${p.id_producto}/imagen` : '/default-profile.jpg';
+                const imgSrc = (p.imagen && p.imagen.startsWith('http')) ? p.imagen : (p.imagen ? `/api/productos/${p.id_producto}/imagen` : '/default-profile.jpg');
                 card.innerHTML = `
                     <div class="producto-imagen-container"><img class="producto-imagen" src="${imgSrc}" alt="${escapeHtml(p.nombre)}"></div>
                     <div class="producto-info">
@@ -148,19 +69,62 @@
             });
         }
 
+        // Delegar evento de click para el botón de añadir al carrito
+        document.getElementById('productosGrid').addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-add')) {
+                const btn = e.target;
+                const idProducto = parseInt(btn.getAttribute('data-id'));
+                
+                // Buscar el producto en la caché
+                const producto = productosCache.find(p => p.id_producto === idProducto);
+                
+                if (producto) {
+                    const imgSrc = (producto.imagen && producto.imagen.startsWith('http')) ? producto.imagen : (producto.imagen ? `/api/productos/${producto.id_producto}/imagen` : 'img/producto-default.png');
+                    // Llamar a la función del carrito (id, nombre, precio, cantidad, imagen, esPlan)
+                    if (typeof agregarAlCarrito === 'function') {
+                        agregarAlCarrito(producto.id_producto, producto.nombre, producto.precio, 1, imgSrc, false);
+                    } else {
+                        alert('Error: El carrito no está cargado correctamente.');
+                    }
+                }
+            }
+        });
+
         async function loadProductos(){
             try{
+                console.log(">>> Iniciando carga de productos...");
                 const res = await fetch('/api/productos');
                 if(!res.ok) throw new Error('Error al obtener productos');
-                productosCache = await res.json();
+                const allProductos = await res.json();
+                console.log(">>> Total productos recibidos del servidor:", allProductos.length);
+                console.log(">>> Categorías detectadas:", [...new Set(allProductos.map(p => p.categoria))]);
+                
+                // Filtrar para que NO aparezcan los planes en la tienda (solo artículos)
+                productosCache = allProductos.filter(p => {
+                    const cat = (p.categoria || '').toLowerCase().trim();
+                    return cat !== 'plan';
+                });
+                
+                console.log(">>> Productos tras filtrar planes:", productosCache.length);
+                
+                const grid = document.getElementById('productosGrid');
+                if (productosCache.length === 0) {
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><h3>No hay productos disponibles en la tienda actualmente.</h3><p>Verifica que la base de datos esté inicializada.</p></div>';
+                } else {
+                    renderProductos(productosCache);
+                }
+
                 // Poblar select de categorías únicas
                 const categories = Array.from(new Set(productosCache.map(p => (p.categoria||'').trim()).filter(Boolean)));
                 const select = document.getElementById('categorySelect');
+                while (select.options.length > 1) select.remove(1);
                 categories.forEach(c => {
                     const opt = document.createElement('option'); opt.value = c; opt.textContent = c; select.appendChild(opt);
                 });
-                renderProductos(productosCache);
-            }catch(e){ console.error(e); }
+            }catch(e){ 
+                console.error(">>> Error en loadProductos:", e);
+                document.getElementById('productosGrid').innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: red;">Error al cargar productos.</div>';
+            }
         }
 
         // Filtrado en tiempo real
@@ -234,5 +198,7 @@
     </div>
 </footer>
 
+<!-- Scripts para el carrito -->
+<script th:src="@{/carrito.js}"></script>
 </body>
 </html>
