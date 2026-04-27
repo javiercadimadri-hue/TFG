@@ -1,10 +1,12 @@
 package com.daw.proyecto.service;
 
 import com.daw.proyecto.entity.Productos;
+import com.daw.proyecto.repository.Detalle_pedidosRepository;
 import com.daw.proyecto.repository.ProductosRepository;
 import com.daw.proyecto.dto.ProductosDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,9 @@ public class ProductosService {
 
     @Autowired
     private ProductosRepository productosRepository;
+
+    @Autowired
+    private Detalle_pedidosRepository detallePedidosRepository;
 
     public List<ProductosDTO> findAll() {
         return productosRepository.findAll().stream()
@@ -32,7 +37,9 @@ public class ProductosService {
         return convertToDTO(savedProductos);
     }
 
+    @Transactional
     public void deleteById(Integer id) {
+        detallePedidosRepository.deleteByProductoId(id);
         productosRepository.deleteById(id);
     }
 
