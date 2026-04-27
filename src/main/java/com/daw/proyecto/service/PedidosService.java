@@ -104,6 +104,7 @@ public class PedidosService {
                         producto.setPrecio(new BigDecimal(item.getPrecio()));
                         producto.setStock(999);
                         producto.setCategoria("Plan");
+                        producto.setVisible(false); // No visible en admin
                         producto = productosRepository.save(producto);
                     }
                 }

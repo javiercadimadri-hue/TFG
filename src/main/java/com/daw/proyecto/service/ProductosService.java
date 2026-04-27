@@ -23,6 +23,7 @@ public class ProductosService {
 
     public List<ProductosDTO> findAll() {
         return productosRepository.findAll().stream()
+                .filter(producto -> producto.getVisible() == null || producto.getVisible())
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -72,7 +73,8 @@ public class ProductosService {
                 productos.getPrecio() != null ? productos.getPrecio().doubleValue() : 0.0,
                 productos.getStock(),
                 productos.getCategoria(),
-                productos.getImagen()
+                productos.getImagen(),
+                productos.getVisible()
         );
     }
 
@@ -85,6 +87,7 @@ public class ProductosService {
         productos.setStock(productosDTO.getStock());
         productos.setCategoria(productosDTO.getCategoria());
         productos.setImagen(productosDTO.getImagen());
+        productos.setVisible(productosDTO.getVisible() != null ? productosDTO.getVisible() : true);
         return productos;
     }
 }

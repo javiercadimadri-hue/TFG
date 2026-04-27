@@ -29,6 +29,9 @@ public class Productos {
     @Column(length = 255)
     private String imagen;
 
+    @Column
+    private Boolean visible = true;
+
     // Constructor vacío
     public Productos() {
     }
@@ -41,6 +44,7 @@ public class Productos {
         this.stock = stock;
         this.categoria = categoria;
         this.imagen = imagen;
+        this.visible = true;
     }
 
     // Getters and Setters
@@ -98,5 +102,13 @@ public class Productos {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
     }
 }

@@ -9,13 +9,14 @@ public class ProductosDTO {
     private Integer stock;
     private String categoria;
     private String imagen;
+    private Boolean visible;
 
     // Constructor vacío
     public ProductosDTO() {
     }
 
     // Constructor con todos los atributos
-    public ProductosDTO(Integer id_producto, String nombre, String descripcion, Double precio, Integer stock, String categoria, String imagen) {
+    public ProductosDTO(Integer id_producto, String nombre, String descripcion, Double precio, Integer stock, String categoria, String imagen, Boolean visible) {
         this.id_producto = id_producto;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -23,6 +24,7 @@ public class ProductosDTO {
         this.stock = stock;
         this.categoria = categoria;
         this.imagen = imagen;
+        this.visible = visible;
     }
 
     // Getters and Setters
@@ -80,5 +82,13 @@ public class ProductosDTO {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
     }
 }
