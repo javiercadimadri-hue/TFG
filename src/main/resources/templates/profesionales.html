@@ -257,6 +257,15 @@
             <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
         </div>
     </footer>
+<script th:src="@{/carrito.js}"></script>
+<script>
+    // Asegurar que el contador se actualice en la página de profesionales
+    window.addEventListener('load', () => {
+        if (typeof actualizarContadorCarrito === 'function') {
+            actualizarContadorCarrito();
+        }
+    });
+</script>
 
 </body>
 </html>

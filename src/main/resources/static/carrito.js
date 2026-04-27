@@ -718,3 +718,9 @@ async function procesarCompra() {
         });
     }
 }
+
+// Inicializar contador del carrito al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarContadorCarrito();
+    setInterval(actualizarContadorCarrito, 2000);
+});

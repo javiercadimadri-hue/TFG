@@ -42,7 +42,6 @@ body {
     line-height: 1 !important;
     display: none;
     z-index: 100;
-    border: 1px solid white;
 }
 
 .cart-icon-link {

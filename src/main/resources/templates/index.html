@@ -270,6 +270,15 @@
      * 'contadorCarrito' para que no haya conflictos.
      */
 </script>
+<script th:src="@{/carrito.js}"></script>
+<script>
+    // Asegurar que el contador se actualice en la página principal
+    window.addEventListener('load', () => {
+        if (typeof actualizarContadorCarrito === 'function') {
+            actualizarContadorCarrito();
+        }
+    });
+</script>
 
 </body>
 </html>
