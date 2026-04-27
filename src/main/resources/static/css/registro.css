@@ -9,6 +9,13 @@
     --grisC: #858585;
     --grisO: #1C1B1B;
     --blanco: #FFFFFF;
+        --granate: #8B1538;
+    --granateC: #B91C4A;
+    --granateO: #6B0F2B;
+    /* AÑADE ESTAS TRES PARA EL FOOTER */
+    --gradient-primary: linear-gradient(90deg, var(--azul), var(--azulC));
+    --azul-glow: rgba(4, 62, 189, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 /* --- ESTILOS GENERALES --- */
@@ -17,20 +24,113 @@
 }
 
 body {
-    background-color: var(--negro);
+    background: linear-gradient(135deg, #050508 0%, #0a0f1a 50%, #050508 100%);
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
     overflow-x: hidden;
 }
 
+/* --- ESTILOS PARA LAS FORMAS ANIMADAS (VISIBILIDAD MEJORADA) --- */
+.bg-shapes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0; /* Asegúrate de que login-section tenga z-index: 1 */
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(140px); /* Un blur un poco mayor para un efecto más suave */
+    
+    /* ANTES: 0.15 | AHORA: 0.22 -> Son un 50% más brillantes */
+    opacity: 0.22; 
+    
+    /* Animación base */
+    animation: intenseFloat 18s ease-in-out infinite;
+}
+
+/* --- POSICIONES Y TAMAÑOS --- */
+.shape-1 {
+    width: 550px; height: 550px;
+    background: var(--azulC);
+    top: -150px; right: -100px;
+}
+
+.shape-2 {
+    width: 450px; height: 450px;
+    background: var(--azul);
+    bottom: -100px; left: -100px;
+    animation-duration: 22s; /* Más lenta */
+    animation-delay: -3s;
+}
+
+.shape-3 {
+    width: 320px; height: 320px;
+    background: var(--granate);
+    top: 35%; left: 15%;
+    animation-duration: 25s; /* Muy lenta */
+    animation-delay: -8s;
+}
+
+/* NUEVA FORMA 4 (Azul vibrante abajo al centro) */
+.shape-4 {
+    width: 400px; height: 400px;
+    background: var(--azulC);
+    bottom: 5%; left: 45%;
+    filter: blur(160px);
+    animation-duration: 20s;
+    animation-delay: -12s;
+}
+
+/* NUEVA FORMA 5 (Granate arriba izquierda) */
+.shape-5 {
+    width: 280px; height: 280px;
+    background: var(--granateC);
+    top: 5%; left: 5%;
+    animation-duration: 15s; /* La más rápida */
+    animation-delay: -18s;
+}
+
+/* --- NUEVA ANIMACIÓN: MOVIMIENTO MÁS LARGO Y COMPLEJO --- */
+@keyframes intenseFloat {
+    0%, 100% { 
+        transform: translate(0, 0) scale(1) rotate(0deg); 
+    }
+    
+    /* Movimiento agresivo en diagonal con cambio de escala */
+    25% { 
+        transform: translate(80px, -60px) scale(1.15) rotate(5deg); 
+    }
+    
+    /* Movimiento lateral largo cruzando el centro */
+    50% { 
+        transform: translate(-90px, 70px) scale(0.9) rotate(-10deg); 
+    }
+    
+    /* Movimiento circular parcial para evitar la linealidad */
+    75% { 
+        transform: translate(60px, 90px) scale(1.05) rotate(5deg); 
+    }
+}
+
 /* --- HEADER --- */
 .header {
     display: flex;
     align-items: center;
-    padding: 10px 40px;
-    background-color: var(--negro);
-    border-bottom: 1px solid var(--grisC);
+    padding: 12px 40px;
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.98) 0%, rgba(10, 15, 25, 0.95) 100%);
+    border-bottom: 1px solid rgba(4, 62, 189, 0.3);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 30px rgba(4, 62, 189, 0.15);
 }
 
 .logo img { height: 70px; width: auto; }
@@ -42,17 +142,7 @@ body {
     text-transform: uppercase;
     margin-left: 15px;
     line-height: 1;
-}
-
-/* Estilo para que el enlace del título sea invisible visualmente */
-.title-link {
-    text-decoration: none; /* Quita el subrayado */
-    color: inherit;        /* Hereda el color blanco del h1.title */
-    display: inline-block; /* Mantiene el comportamiento de bloque para el área de clic */
-}
-
-.title-link:visited {
-    color: inherit;        /* Evita que cambie de color si ya lo has visitado */
+    letter-spacing: 2px;
 }
 
 .nav-links { display: flex; gap: 45px; margin-left: 120px; }
@@ -60,63 +150,160 @@ body {
     text-decoration: none;
     color: var(--blanco);
     text-transform: uppercase;
-    font-weight: 500;
-    transition: color 0.3s, transform 0.3s;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    position: relative;
+    padding-bottom: 5px;
 }
-.nav-links a:hover { color: var(--azulC); transform: scale(1.1); }
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--azul), var(--azulC));
+    transition: width 0.3s ease;
+}
+.nav-links a:hover { color: var(--azulC); }
+.nav-links a:hover::after { width: 100%; }
 
 .account-links { display: flex; gap: 15px; margin-left: auto; align-items: center; }
+/* Sobrescribir tus .account-links a actuales */
 .account-links a {
     text-decoration: none;
     color: var(--blanco);
-    background-color: var(--azul);
-    padding: 10px 45px;
-    border-radius: 4px;
-    font-weight: 700;
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azulC) 100%);
+    padding: 12px 30px;
+    border-radius: 50px; /* Forma redondeada como la plantilla */
+    font-weight: 600;
+    font-size: 13px;
     text-transform: uppercase;
-    transition: background 0.3s;
-    white-space: nowrap;
+    letter-spacing: 1px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    position: relative;
+    overflow: hidden;
 }
-.account-links a:hover { background-color: var(--azulC); }
+
+/* El segundo botón (Inscribirse) con el color granate de la plantilla */
+.account-links a:last-child {
+    background: linear-gradient(135deg, var(--granate) 0%, var(--granateC) 100%);
+}
+
+.account-links a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(58, 111, 242, 0.4);
+}
+
+.account-links a:last-child:hover {
+    box-shadow: 0 10px 30px rgba(139, 38, 53, 0.4);
+}
 
 .social-icons { display: flex; gap: 20px; margin-left: 30px; }
-.social-icons a { color: var(--blanco); font-size: 22px; transition: transform 0.3s, color 0.3s; }
-.social-icons a:hover { color: var(--azulC); transform: scale(1.1); }
+.social-icons a { 
+    color: var(--blanco); 
+    font-size: 22px; 
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+.social-icons a:hover { 
+    color: var(--azulC); 
+    transform: translateY(-3px) scale(1.1);
+    opacity: 1;
+}
 
 
 
-
-/* --- FOOTER (Restaurado Hovers) --- */
+/* --- FOOTER --- */
 .footer {
-    background-color: var(--negro);
-    padding: 60px 20px 20px 20px;
-    border-top: 1px solid var(--grisO);
+    background: var(--negro);
+    padding: 80px 20px 30px;
+    border-top: 1px solid var(--glass-border);
     color: var(--blanco);
+    position: relative;
+    z-index: 1;
+    margin-top: 60px;
+}
+
+.footer-glow {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 2px;
+    background: var(--gradient-primary);
+    filter: blur(1px);
+    box-shadow: 0 0 60px var(--azul-glow);
 }
 
 .footer-container {
     max-width: 1200px;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 40px;
-    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 50px;
 }
 
-.footer-column h3 { font-family: 'Oswald'; color: var(--azulC); margin-bottom: 20px; text-transform: uppercase; }
-.footer-column ul { list-style: none; padding: 0; }
-.footer-column ul li { margin-bottom: 12px; }
+.footer-column h3 { 
+    font-family: 'Oswald', sans-serif;
+    color: var(--blanco);
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    font-size: 18px;
+    position: relative;
+    display: inline-block;
+}
+
+.footer-column h3::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+}
+
+.footer-column ul { list-style: none; padding: 0; margin: 0; }
+.footer-column ul li { margin-bottom: 14px; }
 .footer-column a {
     color: var(--grisC);
     text-decoration: none;
-    font-size: 15px;
-    transition: color 0.3s ease;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
 }
-.footer-column a:hover { color: var(--blanco); text-decoration: underline; }
 
-.footer-bottom { text-align: center; margin-top: 50px; border-top: 1px solid var(--grisO); padding-top: 20px; color: var(--grisC); font-size: 13px; }
+.footer-column a i {
+    font-size: 12px;
+    color: var(--azulC);
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
 
+.footer-column a:hover { 
+    color: var(--blanco);
+    transform: translateX(5px);
+}
+
+.footer-column a:hover i {
+    opacity: 1;
+}
+
+.footer-bottom { 
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid var(--glass-border);
+    color: var(--grisC);
+    font-size: 13px;
+}
 /* --- MEDIA QUERIES --- */
 
 /* SOLUCIÓN PARA 1366px (Laptop) */
@@ -159,63 +346,74 @@ body {
 }
 
 /* ================================================= */
-/* ESTILOS DE FORMULARIOS - IRONFIT (LOGIN & REGISTRO) */
+/* SECCIÓN DE FORMULARIOS - IRONFIT (UNIFICADO)      */
 /* ================================================= */
 
-/* Contenedor principal: Centrado con márgenes equilibrados */
 .login-section {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: calc(100vh - 91px); 
-    padding: 60px 20px; 
-    background-color: var(--negro);
+    padding: 50px 20px; 
+    background: transparent;
 }
 
-/* --- TARJETA PRINCIPAL --- */
+/* --- TARJETA CON EFECTO HOVER --- */
 .login-card {
-    background-color: var(--grisO);
-    padding: 50px; 
+    padding: 50px 50px; 
     border-radius: 15px;
-    border: 1px solid #2a2a2a; 
     width: 100%;
-    max-width: 500px; /* Tarjeta ancha */
+    max-width: 500px;
     text-align: center;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Efecto Hover: Elevación y resplandor azul */
+.login-card {
+    /* Fondo con transparencia y desenfoque (Glass effect) */
+    background: transparent;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    
+    /* Borde sutil azulado */
+    border: 1px solid rgba(58, 111, 242, 0.2);
+    
+    /* Sombra profunda para dar relieve */
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5), 
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 .login-card:hover {
     transform: translateY(-12px); 
     border-color: var(--azulC);    
     box-shadow: 0 20px 40px rgba(4, 62, 189, 0.3);
 }
 
-/* --- CABECERA DE LA TARJETA (Icono + Título) --- */
+/* --- CABECERA DE LA TARJETA (NUEVO) --- */
 .card-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px; /* Espacio entre el icono pequeño y el texto */
+    gap: 15px; /* Espacio entre el icono y el título */
     margin-bottom: 5px;
 }
 
 .card-header i {
-    font-size: 28px; /* Icono pequeño a la izquierda */
+    font-size: 28px; /* Icono más pequeño y elegante */
     color: var(--azulC);
     transition: transform 0.4s ease;
 }
 
 .login-card:hover .card-header i {
-    transform: rotate(-10deg) scale(1.1);
+    transform: scale(1.1) rotate(-10deg); /* Pequeño giro al pasar el ratón */
 }
 
 .login-card h1 {
     font-family: 'Oswald', sans-serif;
     color: var(--blanco);
     text-transform: uppercase;
-    font-size: 32px;
+    font-size: 32px; /* Ajustado para que quepa bien con el icono */
     margin: 0;
     letter-spacing: 1px;
 }
@@ -223,10 +421,10 @@ body {
 .login-card p {
     color: var(--grisC);
     margin: 5px 0 35px 0;
-    font-size: 16px;
+    font-size: 17px;
 }
 
-/* --- ESTILOS DE LOS CAMPOS (FORM-GROUP) --- */
+/* --- FORMULARIO Y INPUTS --- */
 .form-group {
     text-align: left;
     margin-bottom: 25px;
@@ -245,34 +443,58 @@ body {
 .form-group label i {
     color: var(--azulC);
     margin-right: 12px;
-    width: 20px; /* Alineación vertical perfecta de los iconos */
+    width: 20px;
     text-align: center;
 }
 
+/* --- INPUTS ESTILO CRISTAL PURO --- */
 .form-group input {
     width: 100%;
-    padding: 15px;
-    background-color: var(--negro);
-    border: 1px solid var(--grisC);
-    border-radius: 8px;
+    padding: 16px 18px;
+    /* Casi totalmente transparente (de 0.3 pasamos a 0.1) */
+    background: rgba(255, 255, 255, 0.05); 
+    
+    /* Borde más brillante para simular el canto del cristal */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
     color: var(--blanco);
     font-family: 'Roboto', sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     transition: all 0.3s ease;
+    
+    /* Aumentamos el desenfoque (de 5px a 10px) para que se vea más premium */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
+/* FOCO DEL INPUT */
 .form-group input:focus {
     outline: none;
+    background: rgba(255, 255, 255, 0.1); /* Se aclara sutilmente */
     border-color: var(--azulC);
-    box-shadow: 0 0 10px rgba(58, 111, 242, 0.2);
-    background-color: #050505;
+    box-shadow: 0 0 20px rgba(58, 111, 242, 0.3);
 }
 
-/* --- BOTÓN DE ACCIÓN CON FLECHA --- */
+/* --- AUTOCOMPLETADO TRANSPARENTE --- */
+/* Nota: Google no permite transparencia real en autofill, pero este truco de sombra muy clara lo simula */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+    /* Usamos un color de sombra muy clarito y traslúcido */
+    -webkit-box-shadow: 0 0 0 1000px rgba(20, 20, 20, 0.2) inset !important;
+    -webkit-text-fill-color: var(--blanco) !important;
+    backdrop-filter: blur(10px) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+/* --- BOTÓN --- */
 .btn-login {
     width: 100%;
     padding: 18px;
-    background-color: var(--azul);
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azulC) 100%);
     color: var(--blanco);
     border: none;
     border-radius: 8px;
@@ -291,7 +513,7 @@ body {
 
 .btn-login:hover {
     background-color: var(--azulC);
-    box-shadow: 0 5px 15px rgba(58, 111, 242, 0.4);
+    box-shadow: 0 5px 15px rgba(58, 111, 242, 0.2);
 }
 
 .btn-login i {
@@ -299,30 +521,33 @@ body {
 }
 
 .btn-login:hover i {
-    transform: translateX(8px); /* La flecha se mueve a la derecha */
+    transform: translateX(8px);
 }
 
-/* --- PIE DE LA TARJETA (Enlaces) --- */
+/* --- PIE DE LA TARJETA (REGISTRO/LOGIN) --- */
 .login-footer {
     margin-top: 30px;
     padding-top: 25px;
-    border-top: 1px solid rgba(133, 133, 133, 0.2);
+    border-top: 1px solid rgba(133, 133, 133, 0.2); /* Línea divisoria sutil */
 }
 
+/* El texto de la pregunta en gris */
 .login-footer p {
     color: var(--grisC);
     font-size: 15px;
     margin: 0;
 }
 
+/* El enlace en azul con formato resaltado */
 .login-footer a {
-    color: var(--azulC);
+    color: var(--azulC); /* Tu variable de azul claro */
     text-decoration: none;
     font-weight: 700;
     margin-left: 5px;
     transition: color 0.3s ease;
 }
 
+/* Efecto al pasar el ratón por el enlace */
 .login-footer a:hover {
     color: var(--blanco);
     text-decoration: underline;
@@ -330,9 +555,6 @@ body {
 
 /* --- RESPONSIVE --- */
 @media screen and (max-width: 600px) {
-    .login-section {
-        padding: 40px 15px;
-    }
     .login-card {
         padding: 40px 25px;
     }

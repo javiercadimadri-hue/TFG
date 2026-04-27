@@ -12,6 +12,12 @@
 </head>
 <body>
     <div th:replace="fragments/header :: header"></div>
+
+    <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div> <div class="shape shape-5"></div> </div>
     
 <section class="login-section">
     <div class="login-card">
@@ -44,49 +50,46 @@
     </div>
 </section>
 
-<footer class="footer">
-    <div class="footer-container">
-        <div class="footer-column">
-            <h3>Únete a nosotros</h3>
-            <ul>
-                <li><a href="#">Trabaja con nosotros</a></li>
-                <li><a href="#">Embajadores</a></li>
-                <li><a href="#">Corporativo</a></li>
-            </ul>
+    <footer class="footer">
+        <div class="footer-glow"></div>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Únete a nosotros</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-briefcase"></i> Trabaja con nosotros</a></li>
+                    <li><a href="#"><i class="fas fa-medal"></i> Embajadores</a></li>
+                    <li><a href="#"><i class="fas fa-building"></i> Corporativo</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Ayuda e Información</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-headset"></i> Soporte</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Preguntas frecuentes</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Donde encontrarnos</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> Nuestros centros</a></li>
+                    <li><a href="#"><i class="fas fa-sitemap"></i> Mapa del sitio</a></li>
+                    <li><a href="#"><i class="fas fa-clock"></i> Horarios</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Condiciones</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Política de privacidad</a></li>
+                    <li><a href="#"><i class="fas fa-gavel"></i> Aviso legal</a></li>
+                    <li><a href="#"><i class="fas fa-cookie-bite"></i> Cookies</a></li>
+                </ul>
+            </div>
         </div>
-        
-        <div class="footer-column">
-            <h3>Ayuda e Información</h3>
-            <ul>
-                <li><a href="#">Soporte</a></li>
-                <li><a href="#">Preguntas frecuentes</a></li>
-                <li><a href="#">Contacto</a></li>
-            </ul>
+        <div class="footer-bottom">
+            <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
         </div>
-
-        <div class="footer-column">
-            <h3>Donde encontrarnos</h3>
-            <ul>
-                <li><a href="#">Nuestros centros</a></li>
-                <li><a href="#">Mapa del sitio</a></li>
-                <li><a href="#">Horarios</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Condiciones</h3>
-            <ul>
-                <li><a href="#">Política de privacidad</a></li>
-                <li><a href="#">Aviso legal</a></li>
-                <li><a href="#">Cookies</a></li>
-            </ul>
-        </div>
-    </div>
-    
-    <div class="footer-bottom">
-        <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
-    </div>
-</footer>
+    </footer>
 
 <script th:src="@{/auth.js}"></script>
 </body>

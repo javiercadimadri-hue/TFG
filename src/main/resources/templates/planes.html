@@ -4,22 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planes - Gimnasio</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/planes.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+        
+        :root {
+            --granate: #8B1538;
+            --granateC: #B91C4A;
+            --granateO: #6B0F2B;
+            --dorado: #D4AF37;
+        }
+        
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a0a0a 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
         .navbar-custom {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0.98) 0%, rgba(20, 10, 15, 0.95) 100%);
+            box-shadow: 0 4px 30px rgba(139, 21, 56, 0.2);
+            border-bottom: 1px solid rgba(139, 21, 56, 0.3);
         }
         .navbar-brand {
-            color: #667eea !important;
+            color: var(--granateC) !important;
             font-weight: 700;
             font-size: 1.5rem;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 2px;
         }
         .container-main {
             margin-top: 60px;
@@ -28,119 +41,196 @@
         .planes-header {
             text-align: center;
             color: white;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
         .planes-header h1 {
+            font-family: 'Oswald', sans-serif;
             font-weight: 700;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        .planes-header p {
+            color: #858585;
+            font-size: 1.1rem;
         }
         .plan-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            padding: 30px;
+            background: linear-gradient(145deg, rgba(20, 15, 18, 0.95) 0%, rgba(30, 20, 25, 0.9) 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            padding: 35px;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             margin-bottom: 30px;
+            border: 1px solid rgba(139, 21, 56, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--granate), var(--granateC));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .plan-card:hover::before {
+            opacity: 1;
         }
         .plan-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            transform: translateY(-15px);
+            box-shadow: 0 30px 70px rgba(139, 21, 56, 0.35);
+            border-color: var(--granateC);
         }
         .plan-card i {
-            font-size: 3rem;
-            color: #667eea;
-            margin-bottom: 20px;
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--granate), var(--granateC));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            display: inline-block;
         }
         .plan-card h3 {
-            color: #2d3748;
+            color: #ffffff;
+            font-family: 'Oswald', sans-serif;
             font-weight: 700;
+            font-size: 1.5rem;
             margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .plan-card .precio {
-            font-size: 2rem;
-            color: #667eea;
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--granateC), #ff6b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-weight: 700;
-            margin: 20px 0;
+            margin: 25px 0;
         }
         .plan-card .precio span {
             font-size: 1rem;
-            color: #6c757d;
+            color: #858585;
+            -webkit-text-fill-color: #858585;
         }
         .plan-card ul {
             text-align: left;
             list-style: none;
-            padding: 20px 0;
-            border-top: 2px solid #e2e8f0;
-            border-bottom: 2px solid #e2e8f0;
+            padding: 25px 0;
+            border-top: 1px solid rgba(139, 21, 56, 0.3);
+            border-bottom: 1px solid rgba(139, 21, 56, 0.3);
         }
         .plan-card ul li {
-            padding: 8px 0;
-            color: #6c757d;
+            padding: 10px 0;
+            color: #b0b0b0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         .plan-card ul li i {
-            color: #28a745;
-            margin-right: 10px;
+            color: var(--granateC);
             font-size: 1rem;
+            margin: 0;
+            -webkit-text-fill-color: var(--granateC);
         }
         .btn-comprar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--granate) 0%, var(--granateC) 100%);
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             color: white;
-            padding: 12px 30px;
+            padding: 14px 30px;
+            font-family: 'Oswald', sans-serif;
             font-weight: 600;
-            margin-top: 20px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 25px;
             transition: all 0.3s ease;
             width: 100%;
+            box-shadow: 0 10px 30px rgba(139, 21, 56, 0.4);
         }
         .btn-comprar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(139, 21, 56, 0.5);
             color: white;
             text-decoration: none;
+            background: linear-gradient(135deg, var(--granateC) 0%, var(--granate) 100%);
         }
         .carrito-badge {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--granate) 0%, var(--granateC) 100%);
             color: white;
             border-radius: 50px;
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            height: 65px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 40px rgba(139, 21, 56, 0.5);
             transition: all 0.3s ease;
             text-decoration: none;
+            border: 2px solid rgba(255,255,255,0.1);
         }
         .carrito-badge:hover {
             transform: scale(1.1);
             color: white;
             text-decoration: none;
+            box-shadow: 0 15px 50px rgba(139, 21, 56, 0.6);
         }
         .contador-carrito {
             position: absolute;
             top: -8px;
             right: -8px;
-            background: #dc3545;
+            background: var(--dorado);
+            color: #000;
             border-radius: 50%;
-            width: 25px;
-            height: 25px;
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 700;
+            border: 2px solid #0a0a0a;
         }
         .alert {
-            border-radius: 10px;
+            border-radius: 12px;
             margin-bottom: 20px;
+            background: rgba(139, 21, 56, 0.2);
+            border: 1px solid var(--granateC);
+            color: #fff;
+        }
+        
+        /* Popular card highlight */
+        .plan-card.popular {
+            border: 2px solid var(--dorado);
+            transform: scale(1.02);
+        }
+        .plan-card.popular::before {
+            opacity: 1;
+            background: linear-gradient(90deg, var(--dorado), #FFD700);
+        }
+        .popular-badge {
+            background: linear-gradient(135deg, var(--dorado), #FFD700);
+            color: #000;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -150,7 +240,7 @@
 
 <div class="container-main">
     <div class="planes-header">
-        <h1><i class="bi bi-dumbbell"></i> Nuestros Planes</h1>
+        <h1><i class="bi bi-lightning-charge-fill" style="color: var(--granateC);"></i> Nuestros Planes</h1>
         <p>Elige el plan que mejor se adapte a tu objetivo</p>
     </div>
 
@@ -177,10 +267,10 @@
 
         <!-- Plan 2: Musculación Completa -->
         <div class="col-md-4">
-            <div class="plan-card" style="border: 3px solid #667eea;">
-                <i class="bi bi-fire" style="color: #ff6b6b;"></i>
+            <div class="plan-card popular">
+                <span class="popular-badge">Más Popular</span>
+                <i class="bi bi-fire" style="-webkit-text-fill-color: var(--dorado);"></i>
                 <h3>Musculación Completa</h3>
-                <p style="color: #667eea; font-weight: 700;">⭐ MÁS POPULAR</p>
                 <div class="precio">29.99<span>€/mes</span></div>
                 <ul>
                     <li><i class="bi bi-check-circle-fill"></i> Acceso ilimitado al gimnasio</li>
@@ -197,7 +287,7 @@
         <!-- Plan 3: Premium VIP -->
         <div class="col-md-4">
             <div class="plan-card">
-                <i class="bi bi-star-fill" style="color: #ffc107;"></i>
+                <i class="bi bi-star-fill" style="-webkit-text-fill-color: var(--dorado);"></i>
                 <h3>Premium VIP</h3>
                 <div class="precio">49.99<span>€/mes</span></div>
                 <ul>

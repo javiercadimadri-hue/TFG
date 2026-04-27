@@ -72,14 +72,20 @@ function registrarUsuario() {
         body: JSON.stringify(usuarioData)
     })
     .then(response => {
-        return response.json().then(data => ({ response, data }));
+
+
+        return response.json().then(data => ({
+            ok: response.ok,
+            status: response.status,
+            data: data
+        }));
     })
-    .then(({ response, data }) => {
-        if (response.ok || data.id_usuario) {
-            showMessageModal('¡Registro exitoso! Ahora puedes iniciar sesión.', 'Registro Exitoso');
-            setTimeout(() => window.location.href = '/login', 2000);
+    .then(result => {
+        if (result.ok || result.data.id_usuario) {
+            alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+            window.location.href = '/login';
         } else {
-            showMessageModal('Error en el registro: ' + (data.error || 'Intenta de nuevo'), 'Error');
+            alert('Error en el registro: ' + (result.data.error || 'Intenta de nuevo'));
         }
     })
     .catch(error => {
@@ -120,8 +126,12 @@ function iniciarSesion() {
             localStorage.setItem('jwt_token', data.token);
             localStorage.setItem('usuario', JSON.stringify(data.usuario));
             
-            showMessageModal('¡Bienvenido ' + data.usuario.nombre + '!', 'Bienvenido');
-            setTimeout(() => window.location.href = '/inicio', 2000);
+            // Redirigir a la página de cuenta
+            showMessageModal('¡Inicio de sesión exitoso! Redirigiendo a tu cuenta...', 'Éxito');
+            setTimeout(() => {
+                window.location.href = '/cuenta';
+            }, 1000); // Pequeño delay para mostrar el mensaje
+            
         } else {
             showMessageModal('Error: ' + (data.error || 'Credenciales incorrectas'), 'Error');
         }

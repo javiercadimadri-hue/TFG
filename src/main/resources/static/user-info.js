@@ -3,14 +3,11 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarInformacionUsuario();
 });
 
-function actualizarInformacionUsuario() {
+async function actualizarInformacionUsuario() {
     try {
-        // Obtener token del usuario
         const token = localStorage.getItem('jwt_token');
         
-        // Si no hay token, redirigir a login
         if (!token) {
-            console.log('No hay sesión iniciada, redirigiendo a login');
             window.location.href = '/login';
             return;
         }
@@ -18,208 +15,218 @@ function actualizarInformacionUsuario() {
         // Configurar botón de logout
         const btnLogout = document.getElementById('btn-logout');
         if (btnLogout) {
-            btnLogout.addEventListener('click', function() {
+            btnLogout.onclick = function() {
                 if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
                     localStorage.removeItem('jwt_token');
                     localStorage.removeItem('usuario');
                     localStorage.removeItem('authToken');
                     window.location.href = '/login';
                 }
-            });
+            };
         }
         
-        // Obtener datos del usuario del localStorage
         const usuarioJSON = localStorage.getItem('usuario');
-        
-        if (usuarioJSON) {
-            const usuario = JSON.parse(usuarioJSON);
-            const nombre = usuario.nombre || 'Usuario';
-            const foto = usuario.foto || 'default-profile.jpg';
-            
-            console.log('Cargando datos del usuario:', nombre);
-            
-            // ===== ACTUALIZAR NOMBRE =====
-            actualizarNombre(nombre);
-            
-            // ===== ACTUALIZAR FOTO =====
-            actualizarFoto(foto, usuario.id_usuario);
-            
-            // ===== ACTUALIZAR INFORMACIÓN PERSONAL =====
+        let usuario = usuarioJSON ? JSON.parse(usuarioJSON) : null;
+
+        // Carga inmediata desde localStorage para evitar parpadeo
+        if (usuario) {
+            actualizarNombre(usuario.nombre || 'Usuario');
+            actualizarFoto(usuario.foto, usuario.id_usuario);
             actualizarInformacionPersonal(usuario);
-            
-            // ===== CARGAR HISTORIAL DE PEDIDOS =====
-            cargarHistorialPedidos(usuario.id_usuario, token);
+            if (usuario.id_usuario) {
+                cargarHistorialPedidos(usuario.id_usuario, token);
+            }
         }
+
+        if (!usuario || !usuario.id_usuario) {
+            window.location.href = '/login';
+            return;
+        }
+
+        // Refrescar datos desde el servidor
+        fetch(`/api/usuarios/${usuario.id_usuario}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error en servidor');
+            return response.json();
+        })
+        .then(usuarioDB => {
+            localStorage.setItem('usuario', JSON.stringify(usuarioDB));
+            actualizarNombre(usuarioDB.nombre);
+            actualizarFoto(usuarioDB.foto, usuarioDB.id_usuario);
+            actualizarInformacionPersonal(usuarioDB);
+        })
+        .catch(err => console.warn('Usando datos locales:', err));
+
     } catch (error) {
-        console.error('Error cargando información del usuario:', error);
+        console.error('Error cargando información:', error);
     }
 }
 
 function actualizarNombre(nombre) {
-    // Actualizar nombre en todos los lugares
-    const elementos = document.querySelectorAll('.user-name, .profile-main-title');
-    elementos.forEach(elemento => {
-        if (elemento.innerText.includes('Noelia') || elemento.innerText === 'Usuario' || elemento.innerText === 'Cargando...') {
-            elemento.innerText = nombre;
-        }
+    const elementos = document.querySelectorAll('.user-name, .profile-main-title, #user-nombre');
+    elementos.forEach(el => {
+        el.innerText = nombre;
     });
     
-    // Específicamente actualizar el título de perfil
-    const profileTitle = document.querySelector('.profile-main-title');
-    if (profileTitle) {
-        profileTitle.innerText = nombre;
-    }
-    
-    // Actualizar en navbar
     const nombreUsuarioNav = document.getElementById('nombreUsuarioNav');
-    if (nombreUsuarioNav) {
-        nombreUsuarioNav.innerText = nombre;
-    }
+    if (nombreUsuarioNav) nombreUsuarioNav.innerText = nombre;
 }
 
 function actualizarFoto(foto, userId) {
-    // Determinar si es una foto customizada (con ID) o una foto por defecto
-    
-    // Actualizar foto en todos los lugares
     const fotos = document.querySelectorAll('.user-avatar, .sidebar-avatar, #fotoUsuarioNav');
     fotos.forEach(img => {
-        // Eliminar cualquier icono de usuario existente
         const iconoExistente = img.parentElement.querySelector('.fa-user-circle');
-        if (iconoExistente) {
-            iconoExistente.remove();
-        }
+        if (iconoExistente) iconoExistente.remove();
         
-            if (foto && foto !== 'default-profile.jpg' && foto !== '' && foto !== null) {
-                img.src = `/api/usuarios/${userId}/foto?t=` + new Date().getTime();
-                img.style.display = 'inline';
-                img.style.backgroundColor = 'transparent';
-            } else {
-                img.style.backgroundColor = '#e0e0e0';
-                img.style.display = 'inline';
-                img.style.borderRadius = '50%';
-                img.src = '';
-                img.alt = 'Sin foto de perfil';
-                const icon = document.createElement('i');
-                icon.className = 'fas fa-user-circle';
-                icon.style.fontSize = '2rem';
-                icon.style.color = '#999';
-                icon.style.position = 'absolute';
-                icon.style.top = '50%';
-                icon.style.left = '50%';
-                icon.style.transform = 'translate(-50%, -50%)';
-                img.parentElement.style.position = 'relative';
-                img.parentElement.appendChild(icon);
-            }
+        if (foto && foto !== 'default-profile.jpg' && foto !== '' && foto !== null) {
+            img.src = `/api/usuarios/${userId}/foto?t=` + new Date().getTime();
+            img.style.display = 'inline';
+        } else {
+            img.src = 'img/default-profile.jpg';
+        }
     });
-    
-    // Ocultar icono de usuario por defecto en navbar
-    const defaultUserIcon = document.getElementById('defaultUserIcon');
-    if (defaultUserIcon && fotoFinal) {
-        defaultUserIcon.style.display = 'none';
-    } else if (defaultUserIcon) {
-        defaultUserIcon.style.display = 'inline';
-    }
 }
 
 function actualizarInformacionPersonal(usuario) {
-    // Actualizar nombre
-    const nombreElement = document.getElementById('user-nombre');
-    if (nombreElement) {
-        nombreElement.innerText = usuario.nombre || 'Usuario';
-    }
+    if (document.getElementById('user-email')) 
+        document.getElementById('user-email').innerText = usuario.email || '---';
     
-    // Actualizar email
-    const emailElement = document.getElementById('user-email');
-    if (emailElement) {
-        emailElement.innerText = usuario.email || 'email@example.com';
-    }
+    if (document.getElementById('user-telefono')) 
+        document.getElementById('user-telefono').innerText = usuario.telefono || usuario.teléfono || 'No registrado';
     
-    // Actualizar teléfono
-    const telefonoElement = document.getElementById('user-telefono');
-    if (telefonoElement) {
-        telefonoElement.innerText = usuario.teléfono || 'No registrado';
-    }
-    
-    // Actualizar plan si está disponible
     const planElement = document.querySelector('.plan-highlight');
-    if (planElement) {
-        planElement.innerText = usuario.plan || 'Ninguno';
-    }
+    if (planElement) planElement.innerText = usuario.plan || 'Ninguno';
     
-    // Actualizar fecha de expiración si está disponible
     const expirationElement = document.getElementById('plan-expiration-date');
-    const expirationLabel = document.getElementById('plan-expiration-label');
-    if (expirationElement && expirationLabel) {
+    const expirationWrapper = document.getElementById('plan-expiration-wrapper');
+    
+    if (expirationElement && expirationWrapper) {
         if (usuario.fechaExpiracionPlan) {
             const date = new Date(usuario.fechaExpiracionPlan);
             expirationElement.innerText = date.toLocaleDateString('es-ES');
-            expirationElement.style.display = 'inline-block';
-            expirationLabel.style.display = 'inline-block';
+            expirationWrapper.style.display = 'block';
         } else {
-            expirationElement.style.display = 'none';
-            expirationLabel.style.display = 'none';
+            expirationWrapper.style.display = 'none';
         }
     }
 }
 
-function cargarHistorialPedidos(userId, token) {
-    // Obtener historial de pedidos del servidor
-    fetch(`/api/pedidos/usuario/${userId}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
+// --- LÓGICA DE PEDIDOS ACTUALIZADA ---
+
+async function cargarHistorialPedidos(userId, token) {
+    try {
+        const response = await fetch(`/api/pedidos/usuario/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
         if (!response.ok) throw new Error('Error al obtener pedidos');
-        return response.json();
-    })
-    .then(pedidos => {
-        console.log('Pedidos obtenidos:', pedidos);
-        mostrarHistorialPedidos(pedidos);
-    })
-    .catch(error => {
-        console.log('No hay historial de pedidos o error al cargar:', error);
-        // Mostrar mensaje si no hay pedidos
-        const ordersHistory = document.querySelector('.orders-history');
-        if (ordersHistory) {
-            ordersHistory.innerHTML = '<p style="text-align: center; color: #999;">No tienes pedidos aún.</p>';
+        const pedidos = await response.json();
+
+        for (let pedido of pedidos) {
+            try {
+                const resDetalles = await fetch(`/api/detalle-pedidos/pedido/${pedido.id_pedido}`, {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (resDetalles.ok) {
+                    pedido.detalles = await resDetalles.json();
+                } else {
+                    pedido.detalles = [];
+                }
+            } catch (err) {
+                console.warn(`Error en detalles del pedido ${pedido.id_pedido}:`, err);
+                pedido.detalles = [];
+            }
         }
-    });
+
+        mostrarHistorialPedidos(pedidos);
+    } catch (error) {
+        console.error("Error historial:", error);
+        const container = document.getElementById('contenedor-pedidos-js');
+        if (container) container.innerHTML = '<p style="text-align: center; color: #999;">No se pudo cargar el historial.</p>';
+    }
 }
 
 function mostrarHistorialPedidos(pedidos) {
-    const ordersHistory = document.getElementById('historial-pedidos') || document.querySelector('.orders-history');
-    if (!ordersHistory) return;
+    const container = document.getElementById('contenedor-pedidos-js');
+    if (!container) return;
     
     if (!pedidos || pedidos.length === 0) {
-        ordersHistory.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No tienes pedidos aún.</p>';
+        container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.5); padding: 20px;">No tienes pedidos aún.</p>';
         return;
     }
     
-    // Crear tabla con los pedidos
-    let contenido = '<h2 class="section-title">Historial de pedidos</h2>';
-    contenido += '<table style="width: 100%; text-align: left; border-collapse: collapse;">';
-    contenido += '<thead><tr style="border-bottom: 2px solid #ddd;">';
-    contenido += '<th style="padding: 10px;">ID Pedido</th>';
-    contenido += '<th style="padding: 10px;">Fecha</th>';
-    contenido += '<th style="padding: 10px;">Estado</th>';
-    contenido += '<th style="padding: 10px;">Total</th>';
-    contenido += '</tr></thead><tbody>';
-    
+    let html = '';
     pedidos.forEach(pedido => {
-        const fechaVal = pedido.fecha || pedido.fecha_pedido; // Soporte para ambos por si acaso
-        const fecha = fechaVal ? new Date(fechaVal).toLocaleDateString('es-ES') : 'N/A';
-        contenido += `<tr style="border-bottom: 1px solid #eee;">`;
-        contenido += `<td style="padding: 10px;">#${pedido.id_pedido}</td>`;
-        contenido += `<td style="padding: 10px;">${fecha}</td>`;
-        contenido += `<td style="padding: 10px;"><span style="background: #4CAF50; color: white; padding: 5px 10px; border-radius: 5px;">${pedido.estado || 'Completado'}</span></td>`;
-        contenido += `<td style="padding: 10px; font-weight: bold;">€${pedido.total || '0.00'}</td>`;
-        contenido += '</tr>';
+        const fecha = new Date(pedido.fecha || pedido.fecha_pedido).toLocaleDateString('es-ES');
+        const estado = pedido.estado || 'Pendiente';
+        
+        let estadoClase = 'pending';
+        if (estado.toLowerCase() === 'entregado' || estado.toLowerCase() === 'completado') {
+            estadoClase = 'completed';
+        } else if (estado.toLowerCase() === 'en proceso' || estado.toLowerCase() === 'procesando') {
+            estadoClase = 'processing';
+        }
+
+        let productosHTML = '';
+        if (pedido.detalles && pedido.detalles.length > 0) {
+            pedido.detalles.forEach(item => {
+                productosHTML += `
+                <div class="product-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(255,255,255,0.03); border-radius: 10px; margin-bottom: 8px;">
+                    <span class="p-name" style="color: #eee; font-size: 0.95rem;">${item.nombreProducto}</span>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="p-qty" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 5px;">x${item.cantidad}</span>
+                        <span class="p-price" style="color: #fff; font-weight: 600;">${item.precio_unitario.toFixed(2)}€</span>
+                    </div>
+                </div>`;
+            });
+        }
+
+        html += `
+        <div class="order-box" style="margin-bottom: 30px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; backdrop-filter: blur(10px);">
+            
+            <div style="padding: 20px 20px 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="display: block; font-weight: bold; font-size: 1.1rem; color: #fff; margin-bottom: 4px;">Pedido #IF-${pedido.id_pedido}</span>
+                    <span style="color: rgba(255,255,255,0.4); font-size: 0.85rem;"><i class="fas fa-calendar-alt"></i> ${fecha}</span>
+                </div>
+                <span class="order-status-badge ${estadoClase}">${estado}</span>
+            </div>
+
+            <div style="width: calc(100% - 40px); height: 1px; background: rgba(255,255,255,0.1); margin: 5px auto 15px auto;"></div>
+
+            <div style="padding: 0 20px 10px 20px;">
+                <p style="font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 12px; letter-spacing: 1.2px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-box" style="color: #3a6ff2; font-size: 0.8rem;"></i> Resumen de productos
+                </p>
+                <div class="order-products">
+                    ${productosHTML}
+                </div>
+            </div>
+
+            <div style="width: calc(100% - 40px); height: 1px; background: rgba(255,255,255,0.1); margin: 10px auto 5px auto;"></div>
+
+            <div style="padding: 15px 20px 20px 20px; text-align: right; display: flex; justify-content: flex-end; align-items: baseline; gap: 12px;">
+                <span style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Importe Total:</span>
+                <span style="font-family: 'Oswald', sans-serif; font-size: 30px; color: #3a6ff2; font-weight: bold; line-height: 1;">
+                    ${pedido.total.toFixed(2)}€
+                </span>
+            </div>
+        </div>`;
     });
     
-    contenido += '</tbody></table>';
-    ordersHistory.innerHTML = contenido;
+    container.innerHTML = html;
 }
-

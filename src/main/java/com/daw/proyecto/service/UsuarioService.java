@@ -82,7 +82,7 @@ public class UsuarioService {
     }
 
     private UsuarioDTO convertToDTO(Usuario usuario) {
-        return new UsuarioDTO(
+        UsuarioDTO dto = new UsuarioDTO(
                 usuario.getId_usuario(),
                 usuario.getNombre(),
                 usuario.getEmail(),
@@ -93,6 +93,9 @@ public class UsuarioService {
                 (usuario.getRol() != null ? usuario.getRol().getValor() : null),
                 usuario.getFotoFilename()
         );
+        dto.setPlan(usuario.getPlan());
+        dto.setFechaExpiracionPlan(usuario.getFechaExpiracionPlan());
+        return dto;
     }
 
     private Usuario convertToEntity(UsuarioDTO usuarioDTO) {
@@ -106,6 +109,8 @@ public class UsuarioService {
         // Convertir el rol desde el texto recibido (ej. 'cliente' o 'admin') al Enum
         usuario.setRol(Rol.fromValor(usuarioDTO.getRol()));
         usuario.setFotoFilename(usuarioDTO.getFoto());
+        usuario.setPlan(usuarioDTO.getPlan());
+        usuario.setFechaExpiracionPlan(usuarioDTO.getFechaExpiracionPlan());
         return usuario;
     }
 }

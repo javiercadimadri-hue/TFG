@@ -192,6 +192,7 @@ public class UsuarioController {
                     usuarioResponse.put("foto", usuario.getFoto());
                     usuarioResponse.put("plan", usuario.getPlan());
                     if (usuario.getFechaExpiracionPlan() != null) {
+                        usuarioResponse.put("fechaExpiracionPlan", usuario.getFechaExpiracionPlan());
                         usuarioResponse.put("fecha_expiracion_plan", usuario.getFechaExpiracionPlan().getTime());
                     }
                     

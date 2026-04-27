@@ -11,66 +11,162 @@
 <body>
     <div th:replace="fragments/header :: header"></div>
 
+    <!-- Animated Background -->
+    <div class="bg-effects">
+        <div class="bg-gradient"></div>
+        <div class="bg-grid"></div>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
     <section class="cart-section">
         <div class="cart-container">
             <div class="cart-items" id="cart-items-container">
-                <h1 class="cart-title">Tu cesta...</h1>
-                
-                <!-- Los productos dinámicos se inyectarán aquí mediante JS -->
+                <div class="cart-header">
+                    <div class="cart-title-wrapper">
+                        <div class="cart-icon-badge">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">0</span>
+                        </div>
+                        <div>
+                            <h1 class="cart-title">Tu cesta</h1>
+                            <p class="cart-subtitle">Revisa tus productos antes de finalizar</p>
+                        </div>
+                    </div>
+                    <button class="btn-clear-cart" title="Vaciar carrito">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Vaciar</span>
+                    </button>
+                </div>
+
+                <!-- Empty State (shown when cart is empty) -->
+                <div class="empty-cart-state" id="empty-cart-state" style="display: none;">
+                    <div class="empty-cart-icon">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
+                    <h3>Tu carrito está vacío</h3>
+                    <p>Parece que aún no has añadido productos a tu carrito</p>
+                    <a th:href="@{/tienda}" class="btn-continue-shopping">
+                        <i class="fas fa-arrow-left"></i> Continuar comprando
+                    </a>
+                </div>
+
+                <!-- Cart Items Container - JS will inject items here -->
+                <div class="cart-items-list" id="cart-items-list">
+                    <!-- Los productos dinámicos se inyectarán aquí mediante JS -->
+                </div>
+
+                <!-- Security Badges -->
+                <div class="security-badges">
+                    <div class="badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Pago seguro</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-undo"></i>
+                        <span>30 días devolución</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-truck"></i>
+                        <span>Envío express</span>
+                    </div>
+                </div>
             </div>
 
-
             <div class="cart-checkout">
-                <h3>Resumen del pedido</h3>
+                <div class="checkout-header">
+                    <h3><i class="fas fa-receipt"></i> Resumen del pedido</h3>
+                </div>
+                
                 <div class="checkout-details" id="checkout-details-container">
-                    <div class="detail-row">
-                        <span>Envío</span>
-                        <span class="free-shipping">GRATIS</span>
+                    <div class="detail-row subtotal-row">
+                        <span>Subtotal</span>
+                        <span id="precio-subtotal">0.00€</span>
                     </div>
+                    <div class="detail-row">
+                        <span>Descuento</span>
+                        <span class="discount-value">0.00€</span>
+                    </div>
+                    <div class="detail-row shipping-row">
+                        <span><i class="fas fa-truck"></i> Envío</span>
+                        <span class="free-shipping">
+                            <i class="fas fa-check-circle"></i> GRATIS
+                        </span>
+                    </div>
+                    
+                    <div class="promo-code-section">
+                        <div class="promo-input-wrapper">
+                            <input type="text" placeholder="Código promocional" class="promo-input">
+                            <button class="btn-apply-promo">Aplicar</button>
+                        </div>
+                    </div>
+
                     <div class="detail-row total">
                         <span>Total</span>
                         <span id="precio-total">0.00€</span>
                     </div>
                 </div>
+
                 <button class="btn-pay" onclick="procesarCompra()">
-                    Tramitar pedido <i class="fas fa-credit-card"></i>
+                    <span class="btn-pay-text">Tramitar pedido</span>
+                    <span class="btn-pay-icon">
+                        <i class="fas fa-lock"></i>
+                    </span>
                 </button>
+
+                <div class="payment-methods">
+                    <span>Métodos de pago aceptados:</span>
+                    <div class="payment-icons">
+                        <i class="fab fa-cc-visa"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fab fa-cc-amex"></i>
+                        <i class="fab fa-cc-paypal"></i>
+                        <i class="fab fa-apple-pay"></i>
+                    </div>
+                </div>
+
+                <div class="checkout-guarantee">
+                    <i class="fas fa-shield-check"></i>
+                    <span>Garantía de compra segura con cifrado SSL</span>
+                </div>
             </div>
         </div>
     </section>
 
     <footer class="footer">
+        <div class="footer-glow"></div>
         <div class="footer-container">
             <div class="footer-column">
                 <h3>Únete a nosotros</h3>
                 <ul>
-                    <li><a href="#">Trabaja con nosotros</a></li>
-                    <li><a href="#">Embajadores</a></li>
-                    <li><a href="#">Corporativo</a></li>
+                    <li><a href="#"><i class="fas fa-briefcase"></i> Trabaja con nosotros</a></li>
+                    <li><a href="#"><i class="fas fa-medal"></i> Embajadores</a></li>
+                    <li><a href="#"><i class="fas fa-building"></i> Corporativo</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Ayuda e Información</h3>
                 <ul>
-                    <li><a href="#">Soporte</a></li>
-                    <li><a href="#">Preguntas frecuentes</a></li>
-                    <li><a href="#">Contacto</a></li>
+                    <li><a href="#"><i class="fas fa-headset"></i> Soporte</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Preguntas frecuentes</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> Contacto</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Donde encontrarnos</h3>
                 <ul>
-                    <li><a href="#">Nuestros centros</a></li>
-                    <li><a href="#">Mapa del sitio</a></li>
-                    <li><a href="#">Horarios</a></li>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> Nuestros centros</a></li>
+                    <li><a href="#"><i class="fas fa-sitemap"></i> Mapa del sitio</a></li>
+                    <li><a href="#"><i class="fas fa-clock"></i> Horarios</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Condiciones</h3>
                 <ul>
-                    <li><a href="#">Política de privacidad</a></li>
-                    <li><a href="#">Aviso legal</a></li>
-                    <li><a href="#">Cookies</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Política de privacidad</a></li>
+                    <li><a href="#"><i class="fas fa-gavel"></i> Aviso legal</a></li>
+                    <li><a href="#"><i class="fas fa-cookie-bite"></i> Cookies</a></li>
                 </ul>
             </div>
         </div>

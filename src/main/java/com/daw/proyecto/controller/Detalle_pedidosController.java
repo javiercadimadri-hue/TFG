@@ -50,4 +50,13 @@ public class Detalle_pedidosController {
         detalle_pedidosService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    // En Detalle_pedidosController.java
+
+    @GetMapping("/pedido/{idPedido}")
+    public List<Detalle_pedidosDTO> getDetallesByPedido(@PathVariable Integer idPedido) {
+        // Este método debe llamar a una función en tu service que haga:
+        // SELECT * FROM detalle_pedidos WHERE id_pedido = idPedido
+        return detalle_pedidosService.findByPedidoId(idPedido); 
+    }
 }

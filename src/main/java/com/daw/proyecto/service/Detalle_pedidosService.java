@@ -26,6 +26,12 @@ public class Detalle_pedidosService {
     @Autowired
     private ProductosRepository productosRepository;
 
+    public List<Detalle_pedidosDTO> findByPedidoId(Integer idPedido) {
+        return detalle_pedidosRepository.buscarPorPedidoId(idPedido).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<Detalle_pedidosDTO> findAll() {
         return detalle_pedidosRepository.findAll().stream()
                 .map(this::convertToDTO)
@@ -36,42 +42,42 @@ public class Detalle_pedidosService {
         return detalle_pedidosRepository.findById(id).map(this::convertToDTO);
     }
 
-    public Detalle_pedidosDTO save(Detalle_pedidosDTO detalle_pedidosDTO) {
-        Detalle_pedidos detalle_pedidos = convertToEntity(detalle_pedidosDTO);
-        Detalle_pedidos savedDetalle_pedidos = detalle_pedidosRepository.save(detalle_pedidos);
-        return convertToDTO(savedDetalle_pedidos);
+    public Detalle_pedidosDTO save(Detalle_pedidosDTO dto) {
+        Detalle_pedidos entity = convertToEntity(dto);
+        return convertToDTO(detalle_pedidosRepository.save(entity));
     }
 
     public void deleteById(Integer id) {
         detalle_pedidosRepository.deleteById(id);
     }
 
-    private Detalle_pedidosDTO convertToDTO(Detalle_pedidos detalle_pedidos) {
+    // --- MAPEO DE ENTIDAD A DTO (Aquí se añaden los datos del producto) ---
+    private Detalle_pedidosDTO convertToDTO(Detalle_pedidos entity) {
         return new Detalle_pedidosDTO(
-                detalle_pedidos.getId_detalle(),
-                detalle_pedidos.getPedido().getId_pedido(),
-                detalle_pedidos.getProducto().getId_producto(),
-                detalle_pedidos.getCantidad(),
-                detalle_pedidos.getPrecio_unitario()
+                entity.getId_detalle(),
+                entity.getPedido().getId_pedido(),
+                entity.getProducto().getId_producto(),
+                entity.getCantidad(),
+                entity.getPrecio_unitario(),
+                entity.getProducto().getNombre(), // Sacado de la entidad Productos
+                entity.getProducto().getImagen()  // Sacado de la entidad Productos
         );
     }
 
-    private Detalle_pedidos convertToEntity(Detalle_pedidosDTO detalle_pedidosDTO) {
-        Detalle_pedidos detalle_pedidos = new Detalle_pedidos();
-        detalle_pedidos.setId_detalle(detalle_pedidosDTO.getId_detalle());
-        detalle_pedidos.setCantidad(detalle_pedidosDTO.getCantidad());
-        detalle_pedidos.setPrecio_unitario(detalle_pedidosDTO.getPrecio_unitario());
+    private Detalle_pedidos convertToEntity(Detalle_pedidosDTO dto) {
+        Detalle_pedidos entity = new Detalle_pedidos();
+        entity.setId_detalle(dto.getId_detalle());
+        entity.setCantidad(dto.getCantidad());
+        entity.setPrecio_unitario(dto.getPrecio_unitario());
 
-        if (detalle_pedidosDTO.getId_pedido() != null) {
-            Pedidos pedido = pedidosRepository.findById(detalle_pedidosDTO.getId_pedido()).orElse(null);
-            detalle_pedidos.setPedido(pedido);
+        if (dto.getId_pedido() != null) {
+            pedidosRepository.findById(dto.getId_pedido()).ifPresent(entity::setPedido);
         }
 
-        if (detalle_pedidosDTO.getId_producto() != null) {
-            Productos producto = productosRepository.findById(detalle_pedidosDTO.getId_producto()).orElse(null);
-            detalle_pedidos.setProducto(producto);
+        if (dto.getId_producto() != null) {
+            productosRepository.findById(dto.getId_producto()).ifPresent(entity::setProducto);
         }
 
-        return detalle_pedidos;
+        return entity;
     }
 }
