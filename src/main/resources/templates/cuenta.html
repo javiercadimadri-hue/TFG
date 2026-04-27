@@ -6,205 +6,305 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/fontawesome-free-7.1.0-web/css/all.css}" type="text/css">
     <title>IronFit - Mi Cuenta</title>
-    <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
+    <link rel="icon" type="image/png" th:href="@{/img/logoNavegadorFinal.png}">
 </head>
 <body>
     <div th:replace="fragments/header :: header"></div>
 
+    <!-- Fondo animado -->
     <div class="bg-shapes">
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
         <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
     </div>
 
-<main class="account-container">
-    <aside class="profile-sidebar">
-        <div class="sidebar-card profile-glow-effect profile-photo-card">
-            <div class="profile-pic-container">
-                <div class="avatar-ring"></div>
-                <img src="img/default-profile.jpg" alt="Foto de perfil" class="sidebar-avatar">
-                <button class="btn-upload-photo" id="btn-upload-photo" title="Cambiar foto de perfil">
-                    <i class="fas fa-camera"></i>
+    <main class="account-container">
+
+        <!-- SIDEBAR IZQUIERDA -->
+        <aside class="profile-sidebar">
+
+            <!-- Tarjeta avatar -->
+            <div class="sidebar-card profile-photo-card profile-glow-effect">
+                <div class="profile-pic-container">
+                    <div class="avatar-ring"></div>
+                    <img src="img/default-profile.jpg" alt="Foto de perfil" class="sidebar-avatar">
+                    <button class="btn-upload-photo" id="btn-upload-photo" title="Cambiar foto de perfil">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <div class="status-indicator"></div>
+                </div>
+                <input type="file" id="foto-input" accept="image/*" style="display: none;">
+                <div class="profile-name-section">
+                    <h1 class="profile-main-title">Cargando...</h1>
+                    <span class="profile-member-since">
+                        <i class="fas fa-circle"></i> Miembro activo
+                    </span>
+                </div>
+            </div>
+
+            <!-- Navegación rápida -->
+<div class="sidebar-card sidebar-nav-card">
+    <p class="sidebar-nav-label">Accesos rápidos</p>
+    <div class="sidebar-nav">
+        <a href="#informacion-personal" class="sidebar-nav-item">
+            <div class="nav-item-icon"><i class="fas fa-user-circle"></i></div>
+            <span>Información personal</span>
+            <i class="fas fa-chevron-right nav-arrow"></i>
+        </a>
+        <a href="#mi-plan" class="sidebar-nav-item">
+            <div class="nav-item-icon"><i class="fas fa-crown"></i></div>
+            <span>Mi plan</span>
+            <i class="fas fa-chevron-right nav-arrow"></i>
+        </a>
+        <a href="#historial-pedidos" class="sidebar-nav-item">
+            <div class="nav-item-icon"><i class="fas fa-shopping-bag"></i></div>
+            <span>Mis pedidos</span>
+            <i class="fas fa-chevron-right nav-arrow"></i>
+        </a>
+    </div>
+</div>
+
+            <!-- Cerrar sesión -->
+            <div class="sidebar-card logout-card">
+                <div class="logout-card-content">
+                    <div class="logout-icon-wrapper">
+                        <i class="fas fa-power-off"></i>
+                    </div>
+                    <div class="logout-text">
+                        <span class="logout-title">Cerrar sesión</span>
+                        <span class="logout-subtitle">Salir de forma segura</span>
+                    </div>
+                </div>
+                <button id="btn-logout" class="btn-swap btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
                 </button>
-                <div class="status-indicator"></div>
             </div>
-            <input type="file" id="foto-input" accept="image/*" style="display: none;">
-            <div class="profile-name-section">
-                <h1 class="profile-main-title">Cargando...</h1>
-                <span class="profile-member-since">Miembro activo</span>
-            </div>
-        </div>
 
-        <div class="sidebar-card logout-card">
-            <div class="logout-card-content">
-                <div class="logout-icon-wrapper">
-                    <i class="fas fa-power-off"></i>
-                </div>
-                <div class="logout-text">
-                    <span class="logout-title">Cerrar sesión</span>
-                    <span class="logout-subtitle">Salir de tu cuenta de forma segura</span>
-                </div>
-            </div>
-            <button id="btn-logout" class="btn-swap btn-logout">
-                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-            </button>
-        </div>
-    </aside>
+        </aside>
 
-    <section class="account-content">
-        <div class="content-card personal-info-card">
-            <div class="card-header">
-                <div class="card-icon">
-                    <i class="fas fa-user-circle"></i>
-                </div>
-                <h2 class="card-title">Información Personal</h2>
-            </div>
-            <div class="personal-data-grid">
-                <div class="data-group">
-                    <label><i class="fas fa-user"></i> Nombre completo</label>
-                    <p id="user-nombre">Cargando...</p>
-                </div>
-                <div class="data-group">
-                    <label><i class="fas fa-envelope"></i> Correo electrónico</label>
-                    <p id="user-email">Cargando...</p>
-                </div>
-                <div class="data-group">
-                    <label><i class="fas fa-phone"></i> Teléfono</label>
-                    <p id="user-telefono">No registrado</p>
-                </div>
-            </div>
-        </div>
+        <!-- CONTENIDO DERECHO -->
+        <section class="account-content">
 
-        <div class="content-card plan-card">
-            <div class="card-header">
-                <div class="card-icon plan-icon-bg">
-                    <i class="fas fa-crown"></i>
-                </div>
-                <h2 class="card-title">Plan Actual</h2>
-            </div>
-            <div class="plan-details">
-                <div class="plan-main-info">
-                    <div class="plan-name-wrapper">
-                        <span class="plan-label">Tu plan</span>
-                        <span class="plan-highlight" id="plan-name">Cargando...</span>
+            <!-- Información personal -->
+            <div class="content-card personal-info-card" id="informacion-personal">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-user-circle"></i>
                     </div>
-                    <div class="plan-expiration-wrapper" id="plan-expiration-wrapper" style="display: none;">
-                        <span class="plan-label" id="plan-expiration-label">Fecha de renovación</span>
-                        <span class="plan-expiration" id="plan-expiration-date"></span>
+                    <div class="card-header-text">
+                        <h2 class="card-title">Información Personal</h2>
+                        <p class="card-subtitle">Tus datos de cuenta</p>
                     </div>
                 </div>
-                <div class="plan-actions">
-                    <a th:href="@{/gimnasio}" class="btn-swap btn-upgrade">
-                        <i class="fas fa-sync-alt"></i> Cambiar plan
-                    </a>
+                <div class="personal-data-grid">
+                    <div class="data-group">
+                        <label><i class="fas fa-user"></i> Nombre completo</label>
+                        <p id="user-nombre">Cargando...</p>
+                    </div>
+                    <div class="data-group">
+                        <label><i class="fas fa-envelope"></i> Correo electrónico</label>
+                        <p id="user-email">Cargando...</p>
+                    </div>
+                    <div class="data-group">
+                        <label><i class="fas fa-phone"></i> Teléfono</label>
+                        <p id="user-telefono">No registrado</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="content-card orders-card" id="historial-pedidos">
-            <div class="card-header">
-                <div class="card-icon orders-icon-bg">
-                    <i class="fas fa-shopping-bag"></i>
+            <!-- Plan actual -->
+            <div class="content-card plan-card" id="mi-plan">
+                <div class="card-header">
+                    <div class="card-icon plan-icon-bg">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="card-header-text">
+                        <h2 class="card-title">Plan Actual</h2>
+                        <p class="card-subtitle">Tu suscripción activa</p>
+                    </div>
                 </div>
-                <h2 class="card-title">Historial de Pedidos</h2>
+                <div class="plan-details">
+                    <div class="plan-main-info">
+                        <div class="plan-name-wrapper">
+                            <span class="plan-label">Tu plan</span>
+                            <span class="plan-highlight" id="plan-name">Cargando...</span>
+                        </div>
+                        <div class="plan-expiration-wrapper" id="plan-expiration-wrapper" style="display: none;">
+                            <span class="plan-label" id="plan-expiration-label">Fecha de renovación</span>
+                            <span class="plan-expiration" id="plan-expiration-date"></span>
+                        </div>
+                    </div>
+                    <div class="plan-actions">
+                        <a th:href="@{/gimnasio}" class="btn-swap btn-upgrade">
+                            <i class="fas fa-sync-alt"></i> Cambiar plan
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="orders-list" id="contenedor-pedidos-js">
-                <div class="orders-loading">
-                    <i class="fas fa-spinner fa-spin fa-2x"></i>
-                    <p>Sincronizando tus pedidos...</p>
+            <!-- Historial de pedidos -->
+            <div class="content-card orders-card" id="historial-pedidos" >
+                <div class="card-header orders-toggle" id="orders-toggle" style="cursor:pointer; margin-bottom:0; padding-bottom:22px; border-bottom: 1px solid var(--glass-border);">
+                    <div class="card-icon orders-icon-bg">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div>
+                        <h2 class="card-title">Historial de Pedidos</h2>
+                        <p class="card-subtitle">Todas tus compras en IronFit</p>
+                    </div>
+                    <div class="orders-toggle-icon" id="orders-toggle-icon" style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+                        <span class="orders-toggle-label">Ver pedidos</span>
+                        <div class="orders-chevron">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orders-body" id="orders-body">
+                    <div class="orders-list" id="contenedor-pedidos-js">
+                        <div class="orders-loading">
+                            <i class="fas fa-spinner fa-spin fa-2x"></i>
+                            <p>Sincronizando tus pedidos...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-glow"></div>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Únete a nosotros</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-briefcase"></i> Trabaja con nosotros</a></li>
+                    <li><a href="#"><i class="fas fa-medal"></i> Embajadores</a></li>
+                    <li><a href="#"><i class="fas fa-building"></i> Corporativo</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Ayuda e Información</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-headset"></i> Soporte</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Preguntas frecuentes</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Donde encontrarnos</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> Nuestros centros</a></li>
+                    <li><a href="#"><i class="fas fa-sitemap"></i> Mapa del sitio</a></li>
+                    <li><a href="#"><i class="fas fa-clock"></i> Horarios</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Condiciones</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Política de privacidad</a></li>
+                    <li><a href="#"><i class="fas fa-gavel"></i> Aviso legal</a></li>
+                    <li><a href="#"><i class="fas fa-cookie-bite"></i> Cookies</a></li>
+                </ul>
+            </div>
         </div>
-    </section>
-</main>
-
-<footer class="footer">
-    <div class="footer-glow"></div>
-    <div class="footer-container">
-        <div class="footer-column">
-            <h3>Únete a nosotros</h3>
-            <ul>
-                <li><a href="#"><i class="fas fa-briefcase"></i> Trabaja con nosotros</a></li>
-                <li><a href="#"><i class="fas fa-medal"></i> Embajadores</a></li>
-                <li><a href="#"><i class="fas fa-building"></i> Corporativo</a></li>
-            </ul>
+        <div class="footer-bottom">
+            <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
         </div>
-        <div class="footer-column">
-            <h3>Ayuda e Información</h3>
-            <ul>
-                <li><a href="#"><i class="fas fa-headset"></i> Soporte</a></li>
-                <li><a href="#"><i class="fas fa-question-circle"></i> Preguntas frecuentes</a></li>
-                <li><a href="#"><i class="fas fa-envelope"></i> Contacto</a></li>
-            </ul>
-        </div>
-        <div class="footer-column">
-            <h3>Donde encontrarnos</h3>
-            <ul>
-                <li><a href="#"><i class="fas fa-map-marker-alt"></i> Nuestros centros</a></li>
-                <li><a href="#"><i class="fas fa-sitemap"></i> Mapa del sitio</a></li>
-                <li><a href="#"><i class="fas fa-clock"></i> Horarios</a></li>
-            </ul>
-        </div>
-        <div class="footer-column">
-            <h3>Condiciones</h3>
-            <ul>
-                <li><a href="#"><i class="fas fa-shield-alt"></i> Política de privacidad</a></li>
-                <li><a href="#"><i class="fas fa-gavel"></i> Aviso legal</a></li>
-                <li><a href="#"><i class="fas fa-cookie-bite"></i> Cookies</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
-    </div>
-</footer>
+    </footer>
 
-<script th:src="@{/auth.js}"></script>
-<script th:src="@{/user-info.js}"></script>
-<script th:src="@{/js/carrito.js}"></script>
-
-<script>
-// Lógica de subida de foto mantenida igual
-document.addEventListener('DOMContentLoaded', function() {
-    const btnUploadPhoto = document.getElementById('btn-upload-photo');
-    const fotoInput = document.getElementById('foto-input');
-
-    if (btnUploadPhoto && fotoInput) {
-        btnUploadPhoto.addEventListener('click', () => fotoInput.click());
-        fotoInput.addEventListener('change', async function(e) {
-            const file = e.target.files[0];
-            if (!file || !file.type.startsWith('image/')) return;
-
-            try {
-                const token = localStorage.getItem('jwt_token');
-                const usuario = JSON.parse(localStorage.getItem('usuario'));
-                if (!token || !usuario) return;
-
-                const formData = new FormData();
-                formData.append('file', file);
-                btnUploadPhoto.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                btnUploadPhoto.disabled = true;
-
-                const response = await fetch(`/api/usuarios/${usuario.id_usuario}/foto`, {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + token },
-                    body: formData
+    <script th:src="@{/auth.js}"></script>
+    <script th:src="@{/user-info.js}"></script>
+    <script th:src="@{/js/carrito.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnUploadPhoto = document.getElementById('btn-upload-photo');
+            const fotoInput = document.getElementById('foto-input');
+            if (btnUploadPhoto && fotoInput) {
+                btnUploadPhoto.addEventListener('click', () => fotoInput.click());
+                fotoInput.addEventListener('change', async function(e) {
+                    const file = e.target.files[0];
+                    if (!file || !file.type.startsWith('image/')) return;
+                    try {
+                        const token = localStorage.getItem('jwt_token');
+                        const usuario = JSON.parse(localStorage.getItem('usuario'));
+                        if (!token || !usuario) return;
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        btnUploadPhoto.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                        btnUploadPhoto.disabled = true;
+                        const response = await fetch(`/api/usuarios/${usuario.id_usuario}/foto`, {
+                            method: 'POST',
+                            headers: { 'Authorization': 'Bearer ' + token },
+                            body: formData
+                        });
+                        if (response.ok) {
+                            const fotoUrl = `/api/usuarios/${usuario.id_usuario}/foto?t=` + new Date().getTime();
+                            document.querySelectorAll('.user-avatar, .sidebar-avatar').forEach(img => img.src = fotoUrl);
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        btnUploadPhoto.innerHTML = '<i class="fas fa-camera"></i>';
+                        btnUploadPhoto.disabled = false;
+                    }
                 });
-
-                if (response.ok) {
-                    const fotoUrl = `/api/usuarios/${usuario.id_usuario}/foto?t=` + new Date().getTime();
-                    document.querySelectorAll('.user-avatar, .sidebar-avatar').forEach(img => img.src = fotoUrl);
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                btnUploadPhoto.innerHTML = '<i class="fas fa-camera"></i>';
-                btnUploadPhoto.disabled = false;
             }
         });
-    }
-});
+    </script>
+
+    <script>
+    // Toggle historial de pedidos
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('orders-toggle');
+        const body = document.getElementById('orders-body');
+        const chevron = document.querySelector('.orders-chevron');
+        const label = document.querySelector('.orders-toggle-label');
+
+        if (toggle && body) {
+            toggle.addEventListener('click', function () {
+                const isOpen = body.classList.contains('open');
+
+                if (!isOpen) {
+                    body.classList.add('open');
+                    toggle.classList.add('active');
+                    if (label) label.textContent = 'Ocultar pedidos';
+
+                    // Scroll suave con offset del header
+                    setTimeout(() => {
+                        const section = document.getElementById('historial-pedidos');
+                        const headerHeight = document.querySelector('.header')?.offsetHeight || 80;
+                        const top = section.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }, 100);
+                } else {
+                    body.classList.remove('open');
+                    toggle.classList.remove('active');
+                    if (label) label.textContent = 'Ver pedidos';
+                }
+            });
+
+            // Si el usuario llega por ancla (#historial-pedidos), abrir automáticamente
+if (window.location.hash === '#historial-pedidos') {
+    // Neutralizamos el scroll automático del navegador
+    history.replaceState(null, '', window.location.pathname);
+
+    body.classList.add('open');
+    toggle.classList.add('active');
+    if (label) label.textContent = 'Ocultar pedidos';
+
+    setTimeout(() => {
+        const header = document.querySelector('.header');
+        const section = document.getElementById('historial-pedidos');
+        const headerHeight = header ? header.offsetHeight : 80;
+        const top = section.getBoundingClientRect().top + window.scrollY - headerHeight - 24;
+        window.scrollTo({ top, behavior: 'smooth' });
+    }, 600);
+}
+        }
+    });
 </script>
 </body>
 </html>

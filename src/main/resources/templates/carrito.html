@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/fontawesome-free-7.1.0-web/css/all.css}" type="text/css">
     <title>IronFit - Carrito</title>
-    <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
+    <link rel="icon" type="image/png" th:href="@{/img/logoNavegadorFinal.png}">
 </head>
 <body>
     <div th:replace="fragments/header :: header"></div>
 
-    <!-- Animated Background -->
+    <!-- Fondo animado -->
     <div class="bg-effects">
         <div class="bg-gradient"></div>
         <div class="bg-grid"></div>
@@ -22,7 +22,10 @@
 
     <section class="cart-section">
         <div class="cart-container">
+
+            <!-- COLUMNA IZQUIERDA: productos -->
             <div class="cart-items" id="cart-items-container">
+
                 <div class="cart-header">
                     <div class="cart-title-wrapper">
                         <div class="cart-icon-badge">
@@ -40,10 +43,17 @@
                     </button>
                 </div>
 
-                <!-- Empty State (shown when cart is empty) -->
+                <!-- Empty State -->
                 <div class="empty-cart-state" id="empty-cart-state" style="display: none;">
-                    <div class="empty-cart-icon">
-                        <i class="fas fa-shopping-basket"></i>
+                    <div class="empty-cart-visual">
+                        <div class="empty-cart-rings">
+                            <div class="ring ring-1"></div>
+                            <div class="ring ring-2"></div>
+                            <div class="ring ring-3"></div>
+                        </div>
+                        <div class="empty-cart-icon">
+                            <i class="fas fa-shopping-basket"></i>
+                        </div>
                     </div>
                     <h3>Tu carrito está vacío</h3>
                     <p>Parece que aún no has añadido productos a tu carrito</p>
@@ -52,33 +62,34 @@
                     </a>
                 </div>
 
-                <!-- Cart Items Container - JS will inject items here -->
-                <div class="cart-items-list" id="cart-items-list">
-                    <!-- Los productos dinámicos se inyectarán aquí mediante JS -->
-                </div>
+                <!-- Lista de items (JS inyecta aquí) -->
+                <div class="cart-items-list" id="cart-items-list"></div>
 
-                <!-- Security Badges -->
+                <!-- Badges de seguridad -->
                 <div class="security-badges">
                     <div class="badge">
-                        <i class="fas fa-shield-alt"></i>
+                        <div class="badge-icon"><i class="fas fa-shield-alt"></i></div>
                         <span>Pago seguro</span>
                     </div>
                     <div class="badge">
-                        <i class="fas fa-undo"></i>
+                        <div class="badge-icon"><i class="fas fa-undo"></i></div>
                         <span>30 días devolución</span>
                     </div>
                     <div class="badge">
-                        <i class="fas fa-truck"></i>
+                        <div class="badge-icon"><i class="fas fa-truck"></i></div>
                         <span>Envío express</span>
                     </div>
                 </div>
             </div>
 
+            <!-- COLUMNA DERECHA: resumen -->
             <div class="cart-checkout">
+                <div class="checkout-glow-top"></div>
+
                 <div class="checkout-header">
                     <h3><i class="fas fa-receipt"></i> Resumen del pedido</h3>
                 </div>
-                
+
                 <div class="checkout-details" id="checkout-details-container">
                     <div class="detail-row subtotal-row">
                         <span>Subtotal</span>
@@ -94,9 +105,10 @@
                             <i class="fas fa-check-circle"></i> GRATIS
                         </span>
                     </div>
-                    
+
                     <div class="promo-code-section">
                         <div class="promo-input-wrapper">
+                            <i class="fas fa-tag promo-icon"></i>
                             <input type="text" placeholder="Código promocional" class="promo-input">
                             <button class="btn-apply-promo">Aplicar</button>
                         </div>
@@ -110,9 +122,7 @@
 
                 <button class="btn-pay" onclick="procesarCompra()">
                     <span class="btn-pay-text">Tramitar pedido</span>
-                    <span class="btn-pay-icon">
-                        <i class="fas fa-lock"></i>
-                    </span>
+                    <span class="btn-pay-icon"><i class="fas fa-lock"></i></span>
                 </button>
 
                 <div class="payment-methods">
@@ -131,6 +141,7 @@
                     <span>Garantía de compra segura con cifrado SSL</span>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -175,13 +186,12 @@
         </div>
     </footer>
 
-<script th:src="@{/user-info.js}"></script>
-<script th:src="@{/carrito.js}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Renderizar el carrito al cargar la página
-        actualizarVistaCarrito();
-    });
-</script>
+    <script th:src="@{/user-info.js}"></script>
+    <script th:src="@{/carrito.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarVistaCarrito();
+        });
+    </script>
 </body>
 </html>

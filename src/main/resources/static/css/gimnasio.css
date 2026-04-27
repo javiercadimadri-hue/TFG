@@ -26,7 +26,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #0a0a0a 0%, #0a0f1a 50%, #0a0a0a 100%);
+    background: #060810;
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
@@ -35,6 +35,20 @@ body {
 }
 
 /* --- HEADER --- */
+/* Botones de no-sesión menos anchos */
+#header-no-session {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#header-no-session a {
+    padding: 12px 18px; /* reducido desde 30px */
+    font-size: 12px;    /* ligeramente más pequeño */
+    letter-spacing: 0.5px; /* menos espaciado entre letras */
+    white-space: nowrap; /* evita que el texto salte de línea */
+}
+
 .header {
     display: flex;
     align-items: center;
@@ -46,6 +60,18 @@ body {
     top: 0;
     z-index: 1000;
     box-shadow: 0 4px 30px rgba(4, 62, 189, 0.15);
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(6, 8, 16, 0.6), transparent);
+    pointer-events: none;
+    z-index: 999;
 }
 
 .logo img { height: 70px; width: auto; }
@@ -207,7 +233,7 @@ body {
     text-transform: uppercase;
     margin: 0 0 16px 0;
     letter-spacing: 4px;
-    line-height: 1.0;
+    line-height: 1.23;
     text-shadow: 0 0 80px rgba(4, 62, 189, 0.6);
     animation: fadeUp 0.7s ease both;
 }
@@ -329,30 +355,11 @@ body {
     font-size: 13px;
 }
 
-/* --- MEDIA QUERIES HEADER --- */
-@media screen and (max-width: 1366px) {
-    .header { padding: 10px 20px; }
-    .nav-links { margin-left: 40px; gap: 25px; }
-    .account-links a { padding: 10px 25px; }
-}
-
-@media screen and (max-width: 768px) {
-    .header { flex-direction: column; padding: 20px; }
-    .nav-links { margin-left: 0; margin-top: 20px; gap: 15px; flex-wrap: wrap; justify-content: center; }
-    .account-links { margin: 20px 0; }
-    .social-icons { margin-left: 0; }
-}
-
-@media screen and (max-width: 480px) {
-    .title { font-size: 26px; }
-    .nav-links a { font-size: 12px; }
-}
-
 /* --- SECCIÓN GIMNASIO (GRID ASIMÉTRICO) --- */
 .gym-grid-section {
     width: 100%;
-    background: linear-gradient(180deg, #0a050a 0%, #080a12 100%);
-    padding: 40px 0;
+    background: #060810;
+    padding: 40px 0 60px;
 }
 
 .gym-container {
@@ -562,37 +569,96 @@ body {
     .plan-name { font-size: 26px; }
     .plan-price { font-size: 24px; }
     .plan-description { font-size: 14px; top: 65px; max-width: 220px; }
-    .hero-title { font-size: 38px; }
+    .gym-hero .hero-title { font-size: 52px; }
 }
 
-@media screen and (max-width: 1024px) {
+
+
+/* Breakpoint intermedio nuevo — evita solapamiento en 2 columnas */
+@media screen and (max-width: 1386px) {
     .gym-container {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: repeat(3, 350px);
         height: auto;
+        min-height: unset;
+        gap: 14px;
     }
-    .gym-box { grid-column: span 1 !important; }
-    .plan-name { font-size: 24px; }
-    .plan-description { font-size: 14px; max-width: 90%; opacity: 1; transform: translateY(0); }
-    .hero-title { font-size: 32px; }
+    .gym-box { height: 360px; } /* más alto para que respiren los elementos */
+    .plan-description {
+        opacity: 1;
+        transform: translateY(0);
+        max-width: 85%;
+        font-size: 13px;
+    }
+    .plan-price {
+        padding: 6px 12px;
+        bottom: 20px;
+        left: 20px;
+    }
+    .add-to-cart {
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 14px;
+    }
+    .gym-hero .hero-title { font-size: 44px; }
+}
+
+/* Breakpoint adicional para pantallas medianas ~768-900px */
+@media screen and (max-width: 900px) {
+    .gym-container {
+        grid-template-columns: 1fr; /* una sola columna para evitar cualquier solapamiento */
+    }
+    .gym-box { height: 300px; }
 }
 
 @media screen and (max-width: 768px) {
+    .gym-hero { padding: 70px 20px 60px; }
+    .gym-hero .hero-title { font-size: 36px; }
     .gym-container {
         grid-template-columns: 1fr;
-        grid-template-rows: repeat(6, 300px);
-        padding: 15px;
+        padding: 0 16px;
+        gap: 12px;
     }
-    .gym-overlay { padding: 20px; }
+    .gym-box { height: 280px; }
     .plan-name { font-size: 22px; top: 20px; left: 20px; }
-    .plan-description { top: 60px; left: 20px; font-size: 13px; max-width: 85%; }
+    .plan-description { top: 60px; left: 20px; font-size: 13px; opacity: 1; transform: translateY(0); }
     .plan-price { bottom: 20px; left: 20px; font-size: 22px; padding: 8px 16px; }
     .add-to-cart { bottom: 20px; right: 20px; padding: 12px 18px; font-size: 12px; }
-    .gym-hero { padding: 40px 20px; }
-    .hero-title { font-size: 28px; }
 }
 
-@media screen and (max-width: 400px) {
-    .plan-description { display: none; }
+@media screen and (max-width: 480px) {
+    .gym-hero .hero-title { font-size: 30px; letter-spacing: 2px; }
+    .gym-box { height: 240px; }
+    .plan-description { opacity: 1; }
     .plan-name { font-size: 20px; }
+    .plan-price { font-size: 20px; padding: 6px 12px; }
 }
+
+
+/* =============================================
+   RESPONSIVE HEADER Y FOOTER
+============================================= */
+@media screen and (max-width: 1250px) {
+    .header { flex-wrap: wrap; padding: 15px 20px; justify-content: space-between; }
+    .nav-links { margin-left: 20px; gap: 20px; }
+}
+
+@media screen and (max-width: 1024px) {
+    .nav-links { order: 3; width: 100%; justify-content: center; margin-left: 0; margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--glass-border); }
+    .footer-container { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media screen and (max-width: 768px) {
+    .header { flex-direction: column; padding: 20px; }
+    .nav-links { margin-left: 0; margin-top: 20px; gap: 15px; flex-wrap: wrap; justify-content: center; }
+    .account-links { margin: 20px 0; }
+    .social-icons { margin-left: 0; }
+}
+
+@media screen and (max-width: 480px) {
+    .title { font-size: 26px; }
+    .nav-links a { font-size: 12px; }
+    .account-links a { padding: 8px 20px; font-size: 12px; }
+    .footer-container { grid-template-columns: 1fr; text-align: center; }
+    .footer-column h3::after { left: 50%; transform: translateX(-50%); }
+}
+

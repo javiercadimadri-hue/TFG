@@ -6,111 +6,529 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/fontawesome-free-7.1.0-web/css/all.css}" type="text/css">
     <title>IronFit - Producto</title>
-    <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
+    <link rel="icon" type="image/png" th:href="@{/img/logoNavegadorFinal.png}">
 </head>
 <body>
     <!-- HEADER UNIFICADO -->
     <div th:replace="fragments/header :: header"></div>
 
+    <!-- HERO BANNER -->
+    <section class="producto-hero">
+        <span class="hero-badge">Tienda IronFit</span>
+        <h2>Detalle del <span>Producto</span></h2>
+    </section>
+
+    <!-- BOTÓN VOLVER -->
+    <div class="btn-volver-wrapper">
+        <a href="/tienda" class="btn-volver">
+            <i class="fas fa-arrow-left"></i> Volver a la tienda
+        </a>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
     <section class="container-main">
         <div th:if="${producto}" class="producto-detalle">
+
+            <!-- IMAGEN -->
             <div class="producto-imagen-grande">
                 <img th:src="${producto.imagen != null and producto.imagen.startsWith('http')} ? ${producto.imagen} : ${'/api/productos/' + producto.id_producto + '/imagen'}" alt="Imagen del producto" />
             </div>
+
+            <!-- INFO -->
             <div class="producto-info-detalle">
                 <h1 th:text="${producto.nombre}">Nombre del Producto</h1>
+
                 <p class="producto-descripcion" th:text="${producto.descripcion}">Descripción del producto.</p>
-                <div class="producto-precio">€ <span th:text="${#numbers.formatDecimal(producto.precio, 1, 2)}">0.00</span></div>
-                <div class="producto-meta">
-                    <span><strong>Categoría:</strong> <span th:text="${producto.categoria}">Categoría</span></span>
-                    <span><strong>Stock:</strong> <span th:text="${producto.stock}">0</span></span>
+
+                <div class="producto-precio">
+                    <span th:text="${#numbers.formatDecimal(producto.precio, 1, 2)}">0.00</span>
+                    <span class="euro-symbol">€</span>
                 </div>
-                <button class="btn-add" th:data-id="${producto.id_producto}">Añadir al carrito</button>
+
+                <div class="producto-meta">
+                    <span>
+                        <strong><i class="fas fa-tag"></i> Categoría:</strong>
+                        <span th:text="${producto.categoria}">Categoría</span>
+                    </span>
+                    <span>
+                        <strong><i class="fas fa-box"></i> Stock:</strong>
+                        <span th:text="${producto.stock}">0</span>
+                    </span>
+                </div>
+
+                <div class="producto-separator"></div>
+
+                <button class="btn-add" th:data-id="${producto.id_producto}">
+                    <i class="fas fa-cart-plus"></i> Añadir al carrito
+                </button>
             </div>
         </div>
+
         <div th:if="${producto == null}" class="no-producto">
             <p>Producto no encontrado.</p>
         </div>
     </section>
 
     <style>
-        body {
-            background: #000;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* ─── VARIABLES ─── */
+        :root {
+            --azul: #043EBD;
+            --azulC: #3A6FF2;
+            --granate: #8B2635;
+            --granateC: #C0392B;
+            --blanco: #ffffff;
+            --negro: #000000;
+            --glass-border: rgba(4, 62, 189, 0.25);
         }
-        .container-main { max-width:1200px; margin:40px auto; padding:0 20px; }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #060810;
+            color: var(--blanco);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── FONDO ATMOSFÉRICO ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                radial-gradient(ellipse 60% 40% at 15% 20%, rgba(4, 62, 189, 0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 35% at 85% 75%, rgba(139, 38, 53, 0.10) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ─── HERO ─── */
+        .producto-hero {
+            position: relative;
+            z-index: 1;
+            padding: 60px 40px 40px;
+            text-align: center;
+        }
+
+        .producto-hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--azulC), transparent);
+        }
+
+        .producto-hero .hero-badge {
+            display: inline-block;
+            background: rgba(4, 62, 189, 0.15);
+            border: 1px solid rgba(58, 111, 242, 0.4);
+            color: var(--azulC);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 6px 18px;
+            border-radius: 50px;
+            margin-bottom: 16px;
+        }
+
+        .producto-hero h2 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--blanco);
+        }
+
+        .producto-hero h2 span {
+            background: linear-gradient(135deg, var(--azulC), var(--azul));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── BOTÓN VOLVER ─── */
+        .btn-volver-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px 20px;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50px;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .btn-volver i { font-size: 11px; transition: transform 0.3s ease; }
+
+        .btn-volver:hover {
+            color: var(--blanco);
+            border-color: rgba(58, 111, 242, 0.5);
+            background: rgba(4, 62, 189, 0.15);
+            transform: translateX(-3px);
+        }
+
+        .btn-volver:hover i { transform: translateX(-3px); }
+
+        /* ─── CONTENEDOR PRINCIPAL ─── */
+        .container-main {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px 80px;
+        }
+
+        /* ─── TARJETA ─── */
         .producto-detalle {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: start;
-            background: rgba(10, 10, 10, 0.98);
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
-            padding: 40px 30px;
+            gap: 0;
+            background: rgba(10, 15, 30, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow:
+                0 0 0 1px rgba(58, 111, 242, 0.08),
+                0 30px 80px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+            animation: fadeInUp 0.6s ease both;
         }
-        @media (max-width: 768px) { .producto-detalle { grid-template-columns: 1fr; padding: 24px 8px; } }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── IMAGEN ─── */
         .producto-imagen-grande {
-            width:100%; height:400px; background:transparent; border-radius:0; overflow:hidden;
-            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            width: 100%;
+            height: 520px;
+            background: rgba(4, 62, 189, 0.04);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--glass-border);
         }
+
+        .producto-imagen-grande::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(4, 62, 189, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .producto-imagen-grande::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 80px;
+            background: linear-gradient(to top, rgba(10, 15, 30, 0.6), transparent);
+            pointer-events: none;
+            z-index: 1;
+        }
+
         .producto-imagen-grande img {
-            width:auto; height:100%; max-width:100%; object-fit:scale-down; background:transparent;
-            filter: none;
+            position: relative;
+            z-index: 0;
+            width: auto;
+            height: 85%;
+            max-width: 90%;
+            object-fit: contain;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.4));
         }
+
+        .producto-imagen-grande:hover img {
+            transform: scale(1.04) translateY(-6px);
+        }
+
+        /* ─── INFO ─── */
         .producto-info-detalle {
-            display:flex; flex-direction:column; gap:18px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 50px 45px;
+            position: relative;
         }
+
+        .producto-info-detalle::before {
+            content: '';
+            position: absolute;
+            top: 50px; left: 45px;
+            width: 40px; height: 3px;
+            background: linear-gradient(90deg, var(--azul), var(--azulC));
+            border-radius: 2px;
+        }
+
         .producto-info-detalle h1 {
-            font-size:2.2rem; font-weight:700; color:#fff; margin:0;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--blanco);
+            margin: 0;
+            margin-top: 28px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            line-height: 1.1;
         }
+
         .producto-descripcion {
-            font-size:1.15rem; color:#e0e0e0; line-height:1.6;
-            background: rgba(60, 70, 100, 0.18);
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-size: 1rem;
+            color: rgba(255,255,255,0.65);
+            line-height: 1.75;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            position: relative;
         }
+
+        .producto-descripcion::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 12px; bottom: 12px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--azulC), transparent);
+            border-radius: 2px;
+        }
+
+        /* ─── PRECIO ─── */
         .producto-precio {
-            font-size:1.7rem; font-weight:800; color:#3A6FF2;
-            background: rgba(60, 70, 100, 0.18);
-            border-radius: 8px;
-            padding: 10px 18px;
-            width: fit-content;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-top: 24px;
+            font-size: 2.8rem;
+            font-weight: 800;
+            font-family: 'Oswald', sans-serif;
+            color: var(--blanco);
+            letter-spacing: 1px;
         }
+
+        .producto-precio .euro-symbol {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--azulC);
+            align-self: flex-start;
+            margin-top: 6px;
+        }
+
+        /* ─── META ─── */
         .producto-meta {
-            display:flex; gap:20px; flex-wrap:wrap;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
         }
+
         .producto-meta span {
-            font-size:1rem; color:#fff; background:rgba(60,70,100,0.18); border-radius:6px; padding:6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px;
+            padding: 8px 16px;
         }
+
+        .producto-meta span strong { color: var(--azulC); font-weight: 700; }
+
+        /* ─── SEPARADOR ─── */
+        .producto-separator {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(58, 111, 242, 0.3), transparent);
+            margin-top: 28px;
+        }
+
+        /* ─── BOTÓN AÑADIR ─── */
         .btn-add {
-            background:linear-gradient(135deg,#3A6FF2,#043EBD);
-            color:white; border:none; padding:14px 28px; border-radius:8px; cursor:pointer; font-size:1.1rem; align-self:flex-start;
-            font-weight:600; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-            transition: background 0.2s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 28px;
+            align-self: stretch;
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azulC) 100%);
+            color: var(--blanco);
+            border: none;
+            padding: 18px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Oswald', sans-serif;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(4, 62, 189, 0.35);
         }
+
+        .btn-add::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-add:hover::before { left: 100%; }
+
         .btn-add:hover {
-            background:linear-gradient(135deg,#043EBD,#3A6FF2); transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 50px rgba(58, 111, 242, 0.45);
         }
-        .no-producto { text-align:center; padding:40px; color:#fff; font-size:1.2rem; }
+
+        .btn-add:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(4, 62, 189, 0.3);
+        }
+
+        /* ─── NO PRODUCTO ─── */
+        .no-producto {
+            text-align: center;
+            padding: 80px 40px;
+            color: rgba(255,255,255,0.5);
+            font-size: 1.2rem;
+        }
+
+        /* ─── FOOTER ─── */
+        .footer {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(180deg, rgba(5,5,15,0.98) 0%, #000 100%);
+            border-top: 1px solid var(--glass-border);
+            padding: 60px 0 0;
+            margin-top: 60px;
+        }
+
+        .footer-glow {
+            position: absolute;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 600px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--azulC), transparent);
+            box-shadow: 0 0 30px 4px rgba(58, 111, 242, 0.3);
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px 40px;
+        }
+
+        .footer-column h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--blanco);
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 30px; height: 2px;
+            background: linear-gradient(90deg, var(--azul), var(--azulC));
+        }
+
+        .footer-column ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+        .footer-column ul li a {
+            text-decoration: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-column ul li a:hover { color: var(--azulC); transform: translateX(4px); }
+        .footer-column ul li a i { width: 14px; font-size: 12px; }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 20px 40px;
+            text-align: center;
+            color: rgba(255,255,255,0.25);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media screen and (max-width: 900px) {
+            .producto-detalle { grid-template-columns: 1fr; }
+            .producto-imagen-grande { height: 350px; border-right: none; border-bottom: 1px solid var(--glass-border); }
+            .producto-info-detalle { padding: 36px 28px; }
+            .footer-container { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media screen and (max-width: 600px) {
+            .producto-hero { padding: 40px 20px 30px; }
+            .producto-hero h2 { font-size: 28px; }
+            .btn-volver-wrapper { padding: 0 20px 16px; }
+            .container-main { padding: 0 20px 60px; }
+            .producto-imagen-grande { height: 260px; }
+            .producto-info-detalle { padding: 28px 20px; }
+            .producto-info-detalle h1 { font-size: 1.8rem; }
+            .producto-precio { font-size: 2.2rem; }
+            .footer-container { grid-template-columns: 1fr; text-align: center; }
+            .footer-column h3::after { left: 50%; transform: translateX(-50%); }
+            .footer-column ul li a { justify-content: center; }
+            .footer-bottom { padding: 20px; }
+        }
     </style>
 
     <script>
-        // Delegar evento de click para el botón de añadir al carrito
         document.addEventListener('DOMContentLoaded', function() {
             const btnAdd = document.querySelector('.btn-add');
             if (btnAdd) {
                 btnAdd.addEventListener('click', function() {
                     const idProducto = parseInt(btnAdd.getAttribute('data-id'));
                     const nombre = document.querySelector('h1').textContent;
-                    const precio = parseFloat(document.querySelector('.producto-precio span').textContent);
+                    const precio = parseFloat(document.querySelector('.producto-precio span:last-child').textContent);
                     const imgSrc = document.querySelector('.producto-imagen-grande img').src;
 
                     if (typeof agregarAlCarrito === 'function') {
