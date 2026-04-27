@@ -2,6 +2,7 @@ package com.daw.proyecto.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.daw.proyecto.dto.UsuarioDTO;
@@ -46,6 +47,20 @@ public class ViewController {
     @GetMapping("/inicio")
     public String redireccionarInicio() {
         return "redirect:/cuenta";
+    }
+
+    // Vista de detalle de producto
+    @GetMapping("/producto/{id}")
+    public String mostrarProducto(@PathVariable Integer id, Model model) {
+        System.out.println(">>> Accediendo a /producto/" + id);
+        productosService.findById(id).ifPresent(producto -> {
+            System.out.println(">>> Producto encontrado: " + producto.getNombre());
+            model.addAttribute("producto", producto);
+        });
+        if (!model.containsAttribute("producto")) {
+            System.out.println(">>> Producto no encontrado para id: " + id);
+        }
+        return "producto";
     }
 
     // Página del carrito

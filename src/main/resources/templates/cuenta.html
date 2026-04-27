@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
-                const token = localStorage.getItem('authToken');
+                const token = localStorage.getItem('jwt_token');
                 const usuarioJSON = localStorage.getItem('usuario');
                 
                 if (!token || !usuarioJSON) {

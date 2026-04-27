@@ -1,3 +1,12 @@
+// Función para mostrar mensajes en modal
+function showMessageModal(message, title = 'Mensaje') {
+    if (typeof showCustomModal === 'function') {
+        showCustomModal(message, title);
+    } else {
+        alert(message);
+    }
+}
+
 // Manejar el formulario de registro
 document.addEventListener('DOMContentLoaded', function() {
     const registroForm = document.getElementById('registroForm');
@@ -29,20 +38,20 @@ function registrarUsuario() {
 
     // Validar campos requeridos
     if (!nombre || !email || !password) {
-        alert('Por favor, completa todos los campos requeridos (nombre, email, contraseña)');
+        showMessageModal('Por favor, completa todos los campos requeridos (nombre, email, contraseña)', 'Error de Validación');
         return;
     }
 
     // Validar email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        alert('Por favor, ingresa un email válido');
+        showMessageModal('Por favor, ingresa un email válido', 'Error de Validación');
         return;
     }
 
     // Validar contraseña (mínimo 6 caracteres)
     if (password.length < 6) {
-        alert('La contraseña debe tener mínimo 6 caracteres');
+        showMessageModal('La contraseña debe tener mínimo 6 caracteres', 'Error de Validación');
         return;
     }
 
@@ -62,18 +71,20 @@ function registrarUsuario() {
         },
         body: JSON.stringify(usuarioData)
     })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
+        return response.json().then(data => ({ response, data }));
+    })
+    .then(({ response, data }) => {
         if (response.ok || data.id_usuario) {
-            alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
-            window.location.href = '/login';
+            showMessageModal('¡Registro exitoso! Ahora puedes iniciar sesión.', 'Registro Exitoso');
+            setTimeout(() => window.location.href = '/login', 2000);
         } else {
-            alert('Error en el registro: ' + (data.error || 'Intenta de nuevo'));
+            showMessageModal('Error en el registro: ' + (data.error || 'Intenta de nuevo'), 'Error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error en la conexión. Intenta de nuevo.');
+        showMessageModal('Error en la conexión. Intenta de nuevo.', 'Error');
     });
 }
 
@@ -84,7 +95,7 @@ function iniciarSesion() {
 
     // Validar campos requeridos
     if (!email || !password) {
-        alert('Por favor, completa el email y la contraseña');
+        showMessageModal('Por favor, completa el email y la contraseña', 'Error de Validación');
         return;
     }
 
@@ -106,17 +117,17 @@ function iniciarSesion() {
     .then(data => {
         if (data.success && data.token) {
             // Guardar token en localStorage
-            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('jwt_token', data.token);
             localStorage.setItem('usuario', JSON.stringify(data.usuario));
             
-            alert('¡Bienvenido ' + data.usuario.nombre + '!');
-            window.location.href = '/inicio';
+            showMessageModal('¡Bienvenido ' + data.usuario.nombre + '!', 'Bienvenido');
+            setTimeout(() => window.location.href = '/inicio', 2000);
         } else {
-            alert('Error: ' + (data.error || 'Credenciales incorrectas'));
+            showMessageModal('Error: ' + (data.error || 'Credenciales incorrectas'), 'Error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error en la conexión. Intenta de nuevo.');
+        showMessageModal('Error en la conexión. Intenta de nuevo.', 'Error');
     });
 }

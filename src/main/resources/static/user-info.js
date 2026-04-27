@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function actualizarInformacionUsuario() {
     try {
         // Obtener token del usuario
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem('jwt_token');
         
         // Si no hay token, redirigir a login
         if (!token) {
@@ -20,9 +20,9 @@ function actualizarInformacionUsuario() {
         if (btnLogout) {
             btnLogout.addEventListener('click', function() {
                 if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('usuario');
                     localStorage.removeItem('jwt_token');
+                    localStorage.removeItem('usuario');
+                    localStorage.removeItem('authToken');
                     window.location.href = '/login';
                 }
             });
@@ -59,10 +59,16 @@ function actualizarNombre(nombre) {
     // Actualizar nombre en todos los lugares
     const elementos = document.querySelectorAll('.user-name, .profile-main-title');
     elementos.forEach(elemento => {
-        if (elemento.innerText.includes('Noelia') || elemento.innerText === 'Usuario') {
+        if (elemento.innerText.includes('Noelia') || elemento.innerText === 'Usuario' || elemento.innerText === 'Cargando...') {
             elemento.innerText = nombre;
         }
     });
+    
+    // Específicamente actualizar el título de perfil
+    const profileTitle = document.querySelector('.profile-main-title');
+    if (profileTitle) {
+        profileTitle.innerText = nombre;
+    }
     
     // Actualizar en navbar
     const nombreUsuarioNav = document.getElementById('nombreUsuarioNav');
@@ -73,7 +79,6 @@ function actualizarNombre(nombre) {
 
 function actualizarFoto(foto, userId) {
     // Determinar si es una foto customizada (con ID) o una foto por defecto
-    const fotoFinal = foto && foto !== 'null' && foto !== '' && foto !== 'default-profile.jpg' ? foto : null;
     
     // Actualizar foto en todos los lugares
     const fotos = document.querySelectorAll('.user-avatar, .sidebar-avatar, #fotoUsuarioNav');
@@ -84,36 +89,27 @@ function actualizarFoto(foto, userId) {
             iconoExistente.remove();
         }
         
-        if (fotoFinal && fotoFinal.includes('/foto')) {
-            // Es una referencia al endpoint de foto de perfil
-            img.src = `/api/usuarios/${userId}${fotoFinal.substring(fotoFinal.indexOf('/foto'))}?t=` + new Date().getTime();
-            img.style.display = 'inline';
-            img.style.backgroundColor = 'transparent';
-        } else if (fotoFinal) {
-            // Es una foto en static/img/
-            img.src = '/img/' + fotoFinal + '?t=' + new Date().getTime();
-            img.style.display = 'inline';
-            img.style.backgroundColor = 'transparent';
-        } else {
-            // Si no hay foto, mostrar círculo gris con icono
-            img.style.backgroundColor = '#e0e0e0';
-            img.style.display = 'inline';
-            img.style.borderRadius = '50%';
-            img.src = ''; // Vaciar src para que no intente cargar
-            img.alt = 'Sin foto de perfil';
-            
-            // Crear un ícono de usuario por defecto
-            const icon = document.createElement('i');
-            icon.className = 'fas fa-user-circle';
-            icon.style.fontSize = '2rem';
-            icon.style.color = '#999';
-            icon.style.position = 'absolute';
-            icon.style.top = '50%';
-            icon.style.left = '50%';
-            icon.style.transform = 'translate(-50%, -50%)';
-            img.parentElement.style.position = 'relative';
-            img.parentElement.appendChild(icon);
-        }
+            if (foto && foto !== 'default-profile.jpg' && foto !== '' && foto !== null) {
+                img.src = `/api/usuarios/${userId}/foto?t=` + new Date().getTime();
+                img.style.display = 'inline';
+                img.style.backgroundColor = 'transparent';
+            } else {
+                img.style.backgroundColor = '#e0e0e0';
+                img.style.display = 'inline';
+                img.style.borderRadius = '50%';
+                img.src = '';
+                img.alt = 'Sin foto de perfil';
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-user-circle';
+                icon.style.fontSize = '2rem';
+                icon.style.color = '#999';
+                icon.style.position = 'absolute';
+                icon.style.top = '50%';
+                icon.style.left = '50%';
+                icon.style.transform = 'translate(-50%, -50%)';
+                img.parentElement.style.position = 'relative';
+                img.parentElement.appendChild(icon);
+            }
     });
     
     // Ocultar icono de usuario por defecto en navbar

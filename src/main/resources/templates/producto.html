@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tienda.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/fontawesome-free-7.1.0-web/css/all.css}" type="text/css">
+    <title>IronFit - Producto</title>
+    <link rel="icon" type="image/png" th:href="@{/img/logo-recortado.PNG}">
+</head>
+<body>
+    <!-- HEADER UNIFICADO -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <section class="container-main">
+        <div th:if="${producto}" class="producto-detalle">
+            <div class="producto-imagen-grande">
+                <img th:src="${producto.imagen != null and producto.imagen.startsWith('http')} ? ${producto.imagen} : ${'/api/productos/' + producto.id_producto + '/imagen'}" alt="Imagen del producto" />
+            </div>
+            <div class="producto-info-detalle">
+                <h1 th:text="${producto.nombre}">Nombre del Producto</h1>
+                <p class="producto-descripcion" th:text="${producto.descripcion}">Descripción del producto.</p>
+                <div class="producto-precio">€ <span th:text="${#numbers.formatDecimal(producto.precio, 1, 2)}">0.00</span></div>
+                <div class="producto-meta">
+                    <span><strong>Categoría:</strong> <span th:text="${producto.categoria}">Categoría</span></span>
+                    <span><strong>Stock:</strong> <span th:text="${producto.stock}">0</span></span>
+                </div>
+                <button class="btn-add" th:data-id="${producto.id_producto}">Añadir al carrito</button>
+            </div>
+        </div>
+        <div th:if="${producto == null}" class="no-producto">
+            <p>Producto no encontrado.</p>
+        </div>
+    </section>
+
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container-main { max-width:1200px; margin:40px auto; padding:0 20px; }
+        .producto-detalle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+            background: rgba(10, 10, 10, 0.98);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+            padding: 40px 30px;
+        }
+        @media (max-width: 768px) { .producto-detalle { grid-template-columns: 1fr; padding: 24px 8px; } }
+        .producto-imagen-grande {
+            width:100%; height:400px; background:transparent; border-radius:0; overflow:hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .producto-imagen-grande img {
+            width:auto; height:100%; max-width:100%; object-fit:scale-down; background:transparent;
+            filter: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .producto-info-detalle {
+            display:flex; flex-direction:column; gap:18px;
+        }
+        .producto-info-detalle h1 {
+            font-size:2.2rem; font-weight:700; color:#fff; margin:0;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+        .producto-descripcion {
+            font-size:1.15rem; color:#e0e0e0; line-height:1.6;
+            background: rgba(60, 70, 100, 0.18);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .producto-precio {
+            font-size:1.7rem; font-weight:800; color:#3A6FF2;
+            background: rgba(60, 70, 100, 0.18);
+            border-radius: 8px;
+            padding: 10px 18px;
+            width: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .producto-meta {
+            display:flex; gap:20px; flex-wrap:wrap;
+        }
+        .producto-meta span {
+            font-size:1rem; color:#fff; background:rgba(60,70,100,0.18); border-radius:6px; padding:6px 12px;
+        }
+        .btn-add {
+            background:linear-gradient(135deg,#3A6FF2,#043EBD);
+            color:white; border:none; padding:14px 28px; border-radius:8px; cursor:pointer; font-size:1.1rem; align-self:flex-start;
+            font-weight:600; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-add:hover {
+            background:linear-gradient(135deg,#043EBD,#3A6FF2); transform: translateY(-2px);
+        }
+        .no-producto { text-align:center; padding:40px; color:#fff; font-size:1.2rem; }
+    </style>
+
+    <script>
+        // Delegar evento de click para el botón de añadir al carrito
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnAdd = document.querySelector('.btn-add');
+            if (btnAdd) {
+                btnAdd.addEventListener('click', function() {
+                    const idProducto = parseInt(btnAdd.getAttribute('data-id'));
+                    const nombre = document.querySelector('h1').textContent;
+                    const precio = parseFloat(document.querySelector('.producto-precio span').textContent);
+                    const imgSrc = document.querySelector('.producto-imagen-grande img').src;
+
+                    if (typeof agregarAlCarrito === 'function') {
+                        agregarAlCarrito(idProducto, nombre, precio, 1, imgSrc, false);
+                    } else {
+                        alert('Error: El carrito no está cargado correctamente.');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script src="/carrito.js" defer></script>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>Únete a nosotros</h3>
+            <ul>
+                <li><a href="#">Trabaja con nosotros</a></li>
+                <li><a href="#">Embajadores</a></li>
+                <li><a href="#">Corporativo</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Ayuda e Información</h3>
+            <ul>
+                <li><a href="#">Soporte</a></li>
+                <li><a href="#">Preguntas frecuentes</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Donde encontrarnos</h3>
+            <ul>
+                <li><a href="#">Nuestros centros</a></li>
+                <li><a href="#">Mapa del sitio</a></li>
+                <li><a href="#">Horarios</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Condiciones</h3>
+            <ul>
+                <li><a href="#">Política de privacidad</a></li>
+                <li><a href="#">Aviso legal</a></li>
+                <li><a href="#">Cookies</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 IronFit. Todos los derechos reservados.</p>
+    </div>
+</footer>
+</body>
+</html>

@@ -54,6 +54,8 @@
             list.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'producto-card';
+                card.style.cursor = 'pointer';
+                card.onclick = () => window.location.href = `/producto/${p.id_producto}`;
                 const imgSrc = (p.imagen && p.imagen.startsWith('http')) ? p.imagen : (p.imagen ? `/api/productos/${p.id_producto}/imagen` : '/default-profile.jpg');
                 card.innerHTML = `
                     <div class="producto-imagen-container"><img class="producto-imagen" src="${imgSrc}" alt="${escapeHtml(p.nombre)}"></div>
@@ -72,6 +74,7 @@
         // Delegar evento de click para el botón de añadir al carrito
         document.getElementById('productosGrid').addEventListener('click', function(e) {
             if (e.target.classList.contains('btn-add')) {
+                e.stopPropagation(); // Evitar que se active el onclick de la card
                 const btn = e.target;
                 const idProducto = parseInt(btn.getAttribute('data-id'));
                 
@@ -153,6 +156,8 @@
             select.addEventListener('change', filterProductos);
         });
     </script>
+
+    <script src="/carrito.js" defer></script>
 
 <footer class="footer">
     <div class="footer-container">

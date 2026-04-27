@@ -309,8 +309,21 @@ public class UsuarioController {
             }
 
             // Actualizar el usuario con la nueva imagen
-            usuarioDTO.setFoto(filename);
-            usuarioService.save(usuarioDTO);
+                usuarioDTO.setFoto(filename);
+                // Rellenar campos nulos con los actuales
+                var usuarioActualOpt = usuarioService.findById(id);
+                if (usuarioActualOpt.isPresent()) {
+                    UsuarioDTO usuarioActual = usuarioActualOpt.get();
+                    if (usuarioDTO.getNombre() == null) usuarioDTO.setNombre(usuarioActual.getNombre());
+                    if (usuarioDTO.getEmail() == null) usuarioDTO.setEmail(usuarioActual.getEmail());
+                    if (usuarioDTO.getContraseña() == null) usuarioDTO.setContraseña(usuarioActual.getContraseña());
+                    if (usuarioDTO.getTeléfono() == null) usuarioDTO.setTeléfono(usuarioActual.getTeléfono());
+                    if (usuarioDTO.getFecha_alta() == null) usuarioDTO.setFecha_alta(usuarioActual.getFecha_alta());
+                    if (usuarioDTO.getRol() == null) usuarioDTO.setRol(usuarioActual.getRol());
+                    if (usuarioDTO.getPlan() == null) usuarioDTO.setPlan(usuarioActual.getPlan());
+                    if (usuarioDTO.getFechaExpiracionPlan() == null) usuarioDTO.setFechaExpiracionPlan(usuarioActual.getFechaExpiracionPlan());
+                }
+                usuarioService.save(usuarioDTO);
 
             return ResponseEntity.ok(Map.of("fotoUrl", "/api/usuarios/" + id + "/foto"));
         } catch (Exception e) {

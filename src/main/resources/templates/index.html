@@ -167,7 +167,37 @@
         });
     </script>
 
+    <script>
+        // Funcionalidad para el newsletter
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsletterBtn = document.querySelector('.newsletter-btn');
+            const newsletterInput = document.querySelector('.newsletter-input');
 
+            if (newsletterBtn && newsletterInput) {
+                newsletterBtn.addEventListener('click', function() {
+                    const email = newsletterInput.value.trim();
+                    if (email === '') {
+                        alert('Por favor, introduce tu email.');
+                        return;
+                    }
+                    // Validar email básico
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        alert('Por favor, introduce un email válido.');
+                        return;
+                    }
+                    // Mostrar modal de éxito
+                    if (window.showCustomModal) {
+                        window.showCustomModal('Inscrito para recibir nuestras promociones correctamente', '¡Éxito!');
+                    } else {
+                        alert('Inscrito para recibir nuestras promociones correctamente');
+                    }
+                    // Limpiar input
+                    newsletterInput.value = '';
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>

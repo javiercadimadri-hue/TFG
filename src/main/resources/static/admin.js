@@ -19,6 +19,31 @@ function parseJwtPayload(token) {
     }
 }
 
+// Funciones para mostrar mensajes en modal
+function showMessageModal(message, title = 'Mensaje') {
+    if (typeof showCustomModal === 'function') {
+        showCustomModal(message, title);
+    } else {
+        alert(message);
+    }
+}
+
+function mostrarErrorUsuario(msg) {
+    showMessageModal('Error: ' + msg, 'Error');
+}
+
+function mostrarExitoUsuario(msg) {
+    showMessageModal('✓ ' + msg, 'Éxito');
+}
+
+function mostrarErrorProducto(msg) {
+    showMessageModal(msg, 'Error');
+}
+
+function mostrarExitoProducto(msg) {
+    showMessageModal(msg, 'Éxito');
+}
+
 function ensureAdminOrRedirect() {
     const token = localStorage.getItem('jwt_token');
     if (!token) {
@@ -193,11 +218,11 @@ async function editarUsuario(id) {
 }
 
 function mostrarErrorUsuario(msg) {
-    alert('Error: ' + msg);
+    showMessageModal('Error: ' + msg, 'Error');
 }
 
 function mostrarExitoUsuario(msg) {
-    alert('✓ ' + msg);
+    showMessageModal('✓ ' + msg, 'Éxito');
 }
 
 async function loadProducts() {
@@ -227,7 +252,7 @@ function renderProductosTable(productos) {
         const tr = document.createElement('tr');
         const imageUrl = p.imagen ? `/api/productos/${p.id_producto}/imagen` : '/static/img-placeholder.png';
         tr.innerHTML = `
-            <td><img src="${imageUrl}" alt="${p.nombre}" onerror="this.src='/static/img-placeholder.png'"></td>
+            <td><img src="${imageUrl}" alt="${p.nombre}" onerror="this.src='/static/img-placeholder.png'" style="width:40px;height:40px;object-fit:cover;border-radius:6px;background:#222;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></td>
             <td>${p.nombre}</td>
             <td>${p.precio.toFixed(2)}€</td>
             <td><span class="badge ${p.stock > 0 ? 'bg-success' : 'bg-danger'}">${p.stock}</span></td>
@@ -312,11 +337,11 @@ function editarProducto(id) {
 }
 
 function mostrarErrorProducto(msg) {
-    alert(msg);
+    showMessageModal(msg, 'Error');
 }
 
 function mostrarExitoProducto(msg) {
-    alert(msg);
+    showMessageModal(msg, 'Éxito');
 }
 
 // Eventos UI

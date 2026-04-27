@@ -373,8 +373,9 @@ function renderizarCarrito() {
 /**
  * Vacía todo el carrito
  */
-function vaciarCarrito() {
-    if (confirm('¿Seguro que deseas vaciar el carrito?')) {
+async function vaciarCarrito() {
+    const confirmed = await showCustomConfirm('¿Seguro que deseas vaciar el carrito?', 'Vaciar Carrito');
+    if (confirmed) {
         console.log('Vaciando carrito...');
         
         // Usar la clave correcta del usuario
@@ -633,25 +634,26 @@ async function vaciarCarritoBackend() {
 /**
  * Procesa la compra: crea un pedido en el backend y vacía el carrito
  */
-function procesarCompra() {
+async function procesarCompra() {
     const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
     const carrito = obtenerCarrito();
     
     if (!usuario || !usuario.id && !usuario.id_usuario) {
-        alert('Debes iniciar sesión para realizar la compra');
-        window.location.href = '/usuarios/login';
+        showCustomModal('Debes iniciar sesión para realizar la compra', 'Error');
+        setTimeout(() => window.location.href = '/login', 2000);
         return;
     }
     
     if (carrito.items.length === 0) {
-        alert('El carrito está vacío');
+        showCustomModal('El carrito está vacío', 'Error');
         return;
     }
     
     const total = calcularTotal();
     const usuarioId = usuario.id || usuario.id_usuario;
     
-    if (confirm(`¿Confirmar compra por €${total.toFixed(2)}?`)) {
+    const confirmed = await showCustomConfirm(`¿Confirmar compra por €${total.toFixed(2)}?`, 'Confirmar Compra');
+    if (confirmed) {
         // Preparar datos para el backend
         const crearPedidoDTO = {
             id_usuario: usuarioId,
@@ -707,12 +709,12 @@ function procesarCompra() {
             actualizarVistaCarrito();
             
             // Mostrar confirmación y redirigir al historial de pedidos
-            alert(`¡Compra realizada exitosamente! Pedido #${pedido.id_pedido}`);
-            window.location.href = '/cuenta';
+            showCustomModal(`¡Compra realizada exitosamente! Pedido #${pedido.id_pedido}`, 'Compra Exitosa');
+            setTimeout(() => window.location.href = '/cuenta', 2000);
         })
         .catch(error => {
             console.error('✗ Error al procesar la compra:', error);
-            alert(`Error al procesar la compra: ${error.message}`);
+            showCustomModal(`Error al procesar la compra: ${error.message}`, 'Error');
         });
     }
 }

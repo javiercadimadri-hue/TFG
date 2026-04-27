@@ -116,7 +116,7 @@ function hacerLogin(email, password) {
                 email: usuario.email,
                 teléfono: usuario.teléfono,
                 rol: usuario.rol,
-                foto: '/api/usuarios/' + usuario.id_usuario + '/foto'
+                foto: usuario.foto // solo el nombre del archivo
             };
             localStorage.setItem('usuario', JSON.stringify(usuarioData));
             
