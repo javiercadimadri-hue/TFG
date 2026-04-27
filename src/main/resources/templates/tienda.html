@@ -614,7 +614,10 @@
                 const card = document.createElement('div');
                 card.className = 'producto-card';
                 card.style.cursor = 'pointer';
-                card.onclick = () => window.location.href = `/producto/${p.id_producto}`;
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('.btn-add')) return;
+                    window.location.href = `/producto/${p.id_producto}`;
+                });
                 const imgSrc = (p.imagen && p.imagen.startsWith('http')) ? p.imagen : (p.imagen ? `/api/productos/${p.id_producto}/imagen` : '/default-profile.jpg');
                 const precioNum = Number(p.precio).toFixed(2);
                 card.innerHTML = `
