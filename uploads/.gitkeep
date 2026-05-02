@@ -1,2 +1,0 @@
-# Este archivo asegura que la carpeta 'uploads' se incluya en Git
-# Las carpetas vacías no se rastrean en Git, pero con este archivo la carpeta se incluirá
