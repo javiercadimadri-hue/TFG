@@ -634,90 +634,332 @@ async function vaciarCarritoBackend() {
 /**
  * Procesa la compra: crea un pedido en el backend y vacía el carrito
  */
-async function procesarCompra() {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+/* =============================================
+   PASARELA DE PAGO — reemplaza procesarCompra()
+   y añade al final del archivo
+============================================= */
+
+// ── Abrir modal ──────────────────────────────
+function procesarCompra() {
     const carrito = obtenerCarrito();
-    
-    if (!usuario || !usuario.id && !usuario.id_usuario) {
-        showCustomModal('Debes iniciar sesión para realizar la compra', 'Error');
-        setTimeout(() => window.location.href = '/login', 2000);
-        return;
-    }
-    
+
     if (carrito.items.length === 0) {
         showCustomModal('El carrito está vacío', 'Error');
         return;
     }
-    
+
+    const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+    if (!usuario || (!usuario.id && !usuario.id_usuario)) {
+        showCustomModal('Debes iniciar sesión para realizar la compra', 'Error');
+        setTimeout(() => window.location.href = '/login', 2000);
+        return;
+    }
+
+    // Mostrar total en el modal
+    const total = calcularTotal();
+    const totalDisplay = document.getElementById('paymentTotalDisplay');
+    if (totalDisplay) totalDisplay.textContent = total.toFixed(2) + '€';
+
+    // Abrir overlay
+    const overlay = document.getElementById('paymentModalOverlay');
+    if (overlay) overlay.classList.add('active');
+}
+
+// ── Cerrar modal ─────────────────────────────
+function cerrarPaymentModal() {
+    const overlay = document.getElementById('paymentModalOverlay');
+    if (overlay) overlay.classList.remove('active');
+    resetPaymentForm();
+}
+
+// ── Reset del formulario ─────────────────────
+function resetPaymentForm() {
+    ['cardNumber','cardHolder','cardExpiry','cardCvv'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.value = ''; el.classList.remove('input-error','input-valid'); }
+    });
+    ['cardNumberError','cardHolderError','cardExpiryError','cardCvvError'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('visible');
+    });
+    const inner = document.getElementById('cardPreviewInner');
+    if (inner) inner.classList.remove('flipped');
+    document.getElementById('cardNumberPreview').textContent = '•••• •••• •••• ••••';
+    document.getElementById('cardHolderPreview').textContent = 'NOMBRE APELLIDO';
+    document.getElementById('cardExpiryPreview').textContent = 'MM/AA';
+    document.getElementById('cardCvvPreview').textContent = '•••';
+}
+
+// ── Validación individual de campos ──────────
+function validateCardNumber(value) {
+    return /^\d{4} \d{4} \d{4} \d{4}$/.test(value);
+}
+function validateHolder(value) {
+    return value.trim().length >= 3;
+}
+function validateExpiry(value) {
+    if (!/^\d{2}\/\d{2}$/.test(value)) return false;
+    const [m, y] = value.split('/').map(Number);
+    if (m < 1 || m > 12) return false;
+    const now = new Date();
+    const expDate = new Date(2000 + y, m - 1, 1);
+    return expDate >= new Date(now.getFullYear(), now.getMonth(), 1);
+}
+function validateCvv(value) {
+    return /^\d{3,4}$/.test(value);
+}
+
+// ── Detectar red de la tarjeta ───────────────
+function detectCardNetwork(number) {
+    const n = number.replace(/\s/g, '');
+    if (/^4/.test(n))         return 'fa-cc-visa';
+    if (/^5[1-5]/.test(n))   return 'fa-cc-mastercard';
+    if (/^3[47]/.test(n))     return 'fa-cc-amex';
+    if (/^6(?:011|5)/.test(n))return 'fa-cc-discover';
+    return 'fa-credit-card';
+}
+
+// ── Enviar compra al backend ──────────────────
+async function ejecutarCompra() {
+    const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+    const carrito = obtenerCarrito();
     const total = calcularTotal();
     const usuarioId = usuario.id || usuario.id_usuario;
-    
-    const confirmed = await showCustomConfirm(`¿Confirmar compra por €${total.toFixed(2)}?`, 'Confirmar Compra');
-    if (confirmed) {
-        // Preparar datos para el backend
-        const crearPedidoDTO = {
-            id_usuario: usuarioId,
-            items: carrito.items.map(item => ({
-                id: item.id,
-                nombre: item.nombre,
-                precio: item.precio,
-                cantidad: item.cantidad,
-                esPlan: item.esPlan || false
-            })),
-            total: total
-        };
-        
-        console.log('Procesando compra:', crearPedidoDTO);
-        
-        // Llamar al endpoint para crear el pedido
-        fetch('/api/pedidos/crear', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + (localStorage.getItem('jwt_token') || '')
-            },
-            body: JSON.stringify(crearPedidoDTO)
-        })
-        .then(async response => {
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || `Error ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(pedido => {
-            console.log('✓ Pedido creado exitosamente:', pedido);
-            
-            // Si hay un plan en el carrito, actualizar el perfil del usuario en localStorage
-            const planItem = carrito.items.find(item => item.esPlan === true);
-            if (planItem) {
-                const usuarioActualizado = JSON.parse(localStorage.getItem('usuario') || '{}');
-                usuarioActualizado.plan = planItem.nombre;
-                // Fecha de expiración: 30 días desde ahora
-                usuarioActualizado.fecha_expiracion_plan = Date.now() + (30 * 24 * 60 * 60 * 1000);
-                localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
-                console.log('✓ Plan actualizado en localStorage:', planItem.nombre);
-            }
-            
-            // Vaciar carrito en localStorage
-            const claveCarrito = obtenerClaveCarrito();
-            localStorage.removeItem(claveCarrito);
-            
-            // Vaciar carrito en backend
-            vaciarCarritoBackend();
-            
-            actualizarVistaCarrito();
-            
-            // Mostrar confirmación y redirigir al historial de pedidos
-            showCustomModal(`¡Compra realizada exitosamente! Pedido #${pedido.id_pedido}`, 'Compra Exitosa');
-            setTimeout(() => window.location.href = '/cuenta', 2000);
-        })
-        .catch(error => {
-            console.error('✗ Error al procesar la compra:', error);
-            showCustomModal(`Error al procesar la compra: ${error.message}`, 'Error');
+
+    const crearPedidoDTO = {
+        id_usuario: usuarioId,
+        items: carrito.items.map(item => ({
+            id:       item.id,
+            nombre:   item.nombre,
+            precio:   item.precio,
+            cantidad: item.cantidad,
+            esPlan:   item.esPlan || false
+        })),
+        total: total
+    };
+
+    const response = await fetch('/api/pedidos/crear', {
+        method: 'POST',
+        headers: {
+            'Content-Type':  'application/json',
+            'Authorization': 'Bearer ' + (localStorage.getItem('jwt_token') || '')
+        },
+        body: JSON.stringify(crearPedidoDTO)
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Error ${response.status}`);
+    }
+
+    return response.json();
+}
+
+// ── Inicializar eventos del modal ─────────────
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Cerrar con botón X
+    const closeBtn = document.getElementById('paymentModalClose');
+    if (closeBtn) closeBtn.addEventListener('click', cerrarPaymentModal);
+
+    // Cerrar al hacer clic fuera del modal
+    const overlay = document.getElementById('paymentModalOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) cerrarPaymentModal();
         });
     }
-}
+
+    // Cerrar con Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') cerrarPaymentModal();
+    });
+
+    /* ── Número de tarjeta ── */
+    const cardNumberInput = document.getElementById('cardNumber');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function () {
+            // Formatear con espacios cada 4 dígitos
+            let val = this.value.replace(/\D/g, '').substring(0, 16);
+            this.value = val.replace(/(.{4})/g, '$1 ').trim();
+
+            // Preview
+            const preview = document.getElementById('cardNumberPreview');
+            const padded = val.padEnd(16, '•');
+            preview.textContent = padded.replace(/(.{4})/g, '$1 ').trim();
+
+            // Icono de red
+            const icon = document.getElementById('cardTypeIcon');
+            const network = document.getElementById('cardNetwork');
+            const networkClass = detectCardNetwork(val);
+            if (icon)    icon.innerHTML    = `<i class="fab ${networkClass}"></i>`;
+            if (network) network.innerHTML = `<i class="fab ${networkClass}"></i>`;
+
+            // Validación visual
+            if (this.value.length > 0) {
+                if (validateCardNumber(this.value)) {
+                    this.classList.add('input-valid'); this.classList.remove('input-error');
+                    document.getElementById('cardNumberError').classList.remove('visible');
+                } else {
+                    this.classList.remove('input-valid');
+                }
+            }
+        });
+    }
+
+    /* ── Titular ── */
+    const cardHolderInput = document.getElementById('cardHolder');
+    if (cardHolderInput) {
+        cardHolderInput.addEventListener('input', function () {
+            const val = this.value.toUpperCase();
+            this.value = val;
+            const preview = document.getElementById('cardHolderPreview');
+            preview.textContent = val || 'NOMBRE APELLIDO';
+
+            if (val.length > 0) {
+                if (validateHolder(val)) {
+                    this.classList.add('input-valid'); this.classList.remove('input-error');
+                    document.getElementById('cardHolderError').classList.remove('visible');
+                } else {
+                    this.classList.remove('input-valid');
+                }
+            }
+        });
+    }
+
+    /* ── Caducidad ── */
+    const cardExpiryInput = document.getElementById('cardExpiry');
+    if (cardExpiryInput) {
+        cardExpiryInput.addEventListener('input', function () {
+            let val = this.value.replace(/\D/g, '').substring(0, 4);
+            if (val.length >= 3) val = val.slice(0, 2) + '/' + val.slice(2);
+            this.value = val;
+
+            const preview = document.getElementById('cardExpiryPreview');
+            preview.textContent = val || 'MM/AA';
+
+            if (val.length === 5) {
+                if (validateExpiry(val)) {
+                    this.classList.add('input-valid'); this.classList.remove('input-error');
+                    document.getElementById('cardExpiryError').classList.remove('visible');
+                } else {
+                    this.classList.add('input-error'); this.classList.remove('input-valid');
+                    document.getElementById('cardExpiryError').classList.add('visible');
+                }
+            }
+        });
+    }
+
+    /* ── CVV (flip de tarjeta) ── */
+    const cardCvvInput = document.getElementById('cardCvv');
+    if (cardCvvInput) {
+        cardCvvInput.addEventListener('focus', function () {
+            document.getElementById('cardPreviewInner').classList.add('flipped');
+        });
+        cardCvvInput.addEventListener('blur', function () {
+            document.getElementById('cardPreviewInner').classList.remove('flipped');
+        });
+        cardCvvInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').substring(0, 4);
+            const preview = document.getElementById('cardCvvPreview');
+            preview.textContent = this.value ? '•'.repeat(this.value.length) : '•••';
+
+            if (this.value.length > 0) {
+                if (validateCvv(this.value)) {
+                    this.classList.add('input-valid'); this.classList.remove('input-error');
+                    document.getElementById('cardCvvError').classList.remove('visible');
+                } else {
+                    this.classList.remove('input-valid');
+                }
+            }
+        });
+    }
+
+    /* ── Submit del formulario ── */
+    const paymentForm = document.getElementById('paymentForm');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const numberVal = document.getElementById('cardNumber').value;
+            const holderVal = document.getElementById('cardHolder').value;
+            const expiryVal = document.getElementById('cardExpiry').value;
+            const cvvVal    = document.getElementById('cardCvv').value;
+
+            let isValid = true;
+
+            // Validar número
+            if (!validateCardNumber(numberVal)) {
+                document.getElementById('cardNumber').classList.add('input-error');
+                document.getElementById('cardNumber').classList.remove('input-valid');
+                document.getElementById('cardNumberError').classList.add('visible');
+                isValid = false;
+            }
+
+            // Validar titular
+            if (!validateHolder(holderVal)) {
+                document.getElementById('cardHolder').classList.add('input-error');
+                document.getElementById('cardHolder').classList.remove('input-valid');
+                document.getElementById('cardHolderError').classList.add('visible');
+                isValid = false;
+            }
+
+            // Validar caducidad
+            if (!validateExpiry(expiryVal)) {
+                document.getElementById('cardExpiry').classList.add('input-error');
+                document.getElementById('cardExpiry').classList.remove('input-valid');
+                document.getElementById('cardExpiryError').classList.add('visible');
+                isValid = false;
+            }
+
+            // Validar CVV
+            if (!validateCvv(cvvVal)) {
+                document.getElementById('cardCvv').classList.add('input-error');
+                document.getElementById('cardCvv').classList.remove('input-valid');
+                document.getElementById('cardCvvError').classList.add('visible');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Todo correcto — procesar compra
+            const btn = document.getElementById('paymentSubmitBtn');
+            btn.classList.add('loading');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+
+            try {
+                const pedido = await ejecutarCompra();
+
+                // Actualizar plan si lo hay
+                const carrito = obtenerCarrito();
+                const planItem = carrito.items.find(item => item.esPlan === true);
+                if (planItem) {
+                    const usuarioActualizado = JSON.parse(localStorage.getItem('usuario') || '{}');
+                    usuarioActualizado.plan = planItem.nombre;
+                    usuarioActualizado.fecha_expiracion_plan = Date.now() + (30 * 24 * 60 * 60 * 1000);
+                    localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+                }
+
+                // Vaciar carrito
+                const claveCarrito = obtenerClaveCarrito();
+                localStorage.removeItem(claveCarrito);
+                vaciarCarritoBackend();
+                actualizarVistaCarrito();
+
+                // Cerrar modal y redirigir
+                cerrarPaymentModal();
+                showCustomModal(`¡Compra realizada! Pedido #IF-${pedido.id_pedido}`, 'Compra Exitosa');
+                setTimeout(() => window.location.href = '/cuenta', 2500);
+
+            } catch (error) {
+                console.error('Error al procesar compra:', error);
+                btn.classList.remove('loading');
+                btn.innerHTML = '<span class="payment-submit-text">Confirmar pago</span><span class="payment-submit-icon"><i class="fas fa-lock"></i></span>';
+                showCustomModal(`Error al procesar la compra: ${error.message}`, 'Error');
+            }
+        });
+    }
+});
 
 // Inicializar contador del carrito al cargar la página
 document.addEventListener('DOMContentLoaded', function() {

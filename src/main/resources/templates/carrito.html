@@ -193,5 +193,169 @@
             actualizarVistaCarrito();
         });
     </script>
+
+<!-- ===== MODAL PASARELA DE PAGO ===== -->
+<div class="payment-modal-overlay" id="paymentModalOverlay">
+    <div class="payment-modal" id="paymentModal">
+
+        <!-- Cabecera -->
+        <div class="payment-modal-header">
+            <div class="payment-modal-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div>
+                <h2 class="payment-modal-title">Pago seguro</h2>
+                <p class="payment-modal-subtitle">Tus datos están cifrados con SSL</p>
+            </div>
+            <button class="payment-modal-close" id="paymentModalClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Tarjeta visual -->
+        <div class="card-preview" id="cardPreview">
+            <div class="card-preview-inner" id="cardPreviewInner">
+                <!-- Cara delantera -->
+                <div class="card-front">
+                    <div class="card-chip">
+                        <div class="chip-lines"></div>
+                    </div>
+                    <div class="card-network" id="cardNetwork">
+                        <i class="fab fa-cc-visa"></i>
+                    </div>
+                    <div class="card-number-preview" id="cardNumberPreview">
+                        •••• •••• •••• ••••
+                    </div>
+                    <div class="card-bottom">
+                        <div>
+                            <div class="card-label">Titular</div>
+                            <div class="card-holder-preview" id="cardHolderPreview">NOMBRE APELLIDO</div>
+                        </div>
+                        <div>
+                            <div class="card-label">Caduca</div>
+                            <div class="card-expiry-preview" id="cardExpiryPreview">MM/AA</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Cara trasera -->
+                <div class="card-back">
+                    <div class="card-magnetic-strip"></div>
+                    <div class="card-cvv-area">
+                        <div class="card-cvv-label">CVV</div>
+                        <div class="card-cvv-preview" id="cardCvvPreview">•••</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <form class="payment-form" id="paymentForm" novalidate>
+
+            <!-- Número de tarjeta -->
+            <div class="payment-field">
+                <label class="payment-label">
+                    <i class="fas fa-credit-card"></i> Número de tarjeta
+                </label>
+                <div class="payment-input-wrapper">
+                    <input
+                        type="text"
+                        id="cardNumber"
+                        class="payment-input"
+                        placeholder="0000 0000 0000 0000"
+                        maxlength="19"
+                        autocomplete="cc-number"
+                    >
+                    <span class="payment-input-icon" id="cardTypeIcon">
+                        <i class="fas fa-credit-card"></i>
+                    </span>
+                </div>
+                <span class="payment-error" id="cardNumberError">Introduce un número de tarjeta válido (16 dígitos)</span>
+            </div>
+
+            <!-- Titular -->
+            <div class="payment-field">
+                <label class="payment-label">
+                    <i class="fas fa-user"></i> Titular de la tarjeta
+                </label>
+                <div class="payment-input-wrapper">
+                    <input
+                        type="text"
+                        id="cardHolder"
+                        class="payment-input"
+                        placeholder="Como aparece en la tarjeta"
+                        maxlength="50"
+                        autocomplete="cc-name"
+                    >
+                </div>
+                <span class="payment-error" id="cardHolderError">Introduce el nombre del titular</span>
+            </div>
+
+            <!-- Fila: Fecha + CVV -->
+            <div class="payment-row">
+                <div class="payment-field">
+                    <label class="payment-label">
+                        <i class="fas fa-calendar-alt"></i> Caducidad
+                    </label>
+                    <div class="payment-input-wrapper">
+                        <input
+                            type="text"
+                            id="cardExpiry"
+                            class="payment-input"
+                            placeholder="MM/AA"
+                            maxlength="5"
+                            autocomplete="cc-exp"
+                        >
+                    </div>
+                    <span class="payment-error" id="cardExpiryError">Fecha inválida o expirada</span>
+                </div>
+
+                <div class="payment-field">
+                    <label class="payment-label">
+                        <i class="fas fa-shield-alt"></i> CVV
+                    </label>
+                    <div class="payment-input-wrapper">
+                        <input
+                            type="text"
+                            id="cardCvv"
+                            class="payment-input"
+                            placeholder="•••"
+                            maxlength="4"
+                            autocomplete="cc-csc"
+                        >
+                        <span class="payment-input-icon">
+                            <i class="fas fa-question-circle" title="Los 3 o 4 dígitos del reverso"></i>
+                        </span>
+                    </div>
+                    <span class="payment-error" id="cardCvvError">CVV inválido</span>
+                </div>
+            </div>
+
+            <!-- Total resumen -->
+            <div class="payment-total-summary">
+                <span>Total a pagar</span>
+                <span class="payment-total-amount" id="paymentTotalDisplay">0.00€</span>
+            </div>
+
+            <!-- Botón confirmar -->
+            <button type="submit" class="payment-submit-btn" id="paymentSubmitBtn">
+                <span class="payment-submit-text">Confirmar pago</span>
+                <span class="payment-submit-icon"><i class="fas fa-lock"></i></span>
+            </button>
+
+        </form>
+
+        <!-- Red de métodos aceptados -->
+        <div class="payment-modal-footer">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <i class="fab fa-cc-amex"></i>
+            <i class="fab fa-cc-paypal"></i>
+            <i class="fab fa-apple-pay"></i>
+        </div>
+
+    </div>
+</div>
+<!-- ===== FIN MODAL ===== -->
+
 </body>
 </html>
